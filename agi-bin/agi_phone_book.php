@@ -13,6 +13,6 @@ try {
     if ($result !== null && ! empty($result->call_id)) {
         $agi->set_variable('CALLERID(name)', $result->call_id);
     }
-} catch (Exception $e) {
-    Util::sysLogMsg('PhoneBookAGI', $e->getMessage());
+} catch (\Throwable $e) {
+    Util::sysLogMsg('PhoneBookAGI', $e->getMessage(), LOG_ERR);
 }
