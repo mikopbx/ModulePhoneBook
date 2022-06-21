@@ -9,6 +9,7 @@
 namespace Modules\ModulePhoneBook\Lib;
 
 
+use MikoPBX\Core\Asterisk\Configs\ExtensionsConf;
 use MikoPBX\Core\System\PBX;
 use MikoPBX\Modules\Config\ConfigClass;
 use MikoPBX\PBXCoreREST\Lib\PBXApiResult;
@@ -48,7 +49,25 @@ class PhoneBookConf extends ConfigClass
      */
     public function generateIncomingRoutBeforeDial($rout_number): string
     {
-        return "same => n,AGI({$this->moduleDir}/agi-bin/agi_phone_book.php)".PHP_EOL;
+        return "same => n,AGI({$this->moduleDir}/agi-bin/agi_phone_book.php,in)".PHP_EOL;
+    }
+
+    public function generateOutRoutContext(array $rout): string
+    {
+        return 'same => n,Set(CONNECTED_LINE_SEND_SUB=phone-book-out,${EXTEN},1)'."\n\t";
+    }
+
+    /**
+     * Prepares additional contexts sections in the extensions.conf file
+     *
+     * @return string
+     */
+    public function extensionGenContexts(): string
+    {
+        // Set(CONNECTEDLINE(name,i)=Zavod)
+        return  '[phone-book-out]'.PHP_EOL.
+            'exten => '.ExtensionsConf::ALL_NUMBER_EXTENSION.",1,AGI({$this->moduleDir}/agi-bin/agi_phone_book.php,out)\n\t".
+            'same => n,return'.PHP_EOL;
     }
 
     /**
