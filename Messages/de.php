@@ -5,7 +5,7 @@ return [
     'module_phnbk_AlreadyExistWithThisNumber' => 'Eintrag mit der Nummer% repesent% existiert bereits',
     'module_phnbk_AddNewRecord' => 'Neuen Eintrag hinzufügen',
     'module_phnbk_ColumnNumber' => 'Telefon',
-    'module_phnbk_ColumnName' => 'Name des Abonnenten',
+    'module_phnbk_ColumnName' => 'Name der Kontaktperson',
     'SubHeaderModulePhoneBook' => 'Ermöglicht die Anzeige der Namen von Anrufern während eines Anrufs und im Gesprächsverlauf',
     'BreadcrumbModulePhoneBook' => 'Telefonbuch',
     'mo_ModuleModulePhoneBook' => 'Telefonbuchmodul',

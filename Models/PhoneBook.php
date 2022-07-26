@@ -20,6 +20,10 @@ use Phalcon\Validation\Validator\Uniqueness as UniquenessValidator;
  * @package Modules\ModulePhoneBook\Models
  *
  * @method static mixed findFirstByNumber(array|string|int $parameters = null)
+ * @Indexes(
+ *     [name='number', columns=['number'], type=''],
+ *     [name='CallerID', columns=['CallerID'], type='']
+ * )
  */
 class PhoneBook extends ModulesModelsBase
 {
