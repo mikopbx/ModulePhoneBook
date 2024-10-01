@@ -10,8 +10,7 @@
 namespace Modules\ModulePhoneBook\Models;
 
 use MikoPBX\Modules\Models\ModulesModelsBase;
-use Phalcon\Validation;
-use Phalcon\Validation\Validator\Uniqueness as UniquenessValidator;
+use Modules\ModulePhoneBook\Lib\MikoPBXVersion;
 
 
 /**
@@ -67,10 +66,12 @@ class PhoneBook extends ModulesModelsBase
 
     public function validation(): bool
     {
-        $validation = new Validation();
+        $validationClass = MikoPBXVersion::getValidationClass();
+        $uniquenessClass = MikoPBXVersion::getUniquenessClass();
+        $validation = new $validationClass();
         $validation->add(
             'number',
-            new UniquenessValidator(
+            $uniquenessClass(
                 [
                     'message' => $this->t('module_phnbk_AlreadyExistWithThisNumber', ['repesent' => $this->number_rep]),
                 ]

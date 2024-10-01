@@ -28,7 +28,7 @@ namespace Modules\ModulePhoneBook\Setup;
 
 use MikoPBX\Common\Models\PbxSettings;
 use MikoPBX\Modules\Setup\PbxExtensionSetupBase;
-use Phalcon\Text;
+use Modules\ModulePhoneBook\Lib\MikoPBXVersion;
 
 
 class PbxExtensionSetup extends PbxExtensionSetupBase
@@ -66,7 +66,8 @@ class PbxExtensionSetup extends PbxExtensionSetupBase
     public function addToSidebar(): bool
     {
         $menuSettingsKey           = "AdditionalMenuItem{$this->moduleUniqueID}";
-        $unCamelizedControllerName = Text::uncamelize($this->moduleUniqueID, '-');
+        $texClass = MikoPBXVersion::getTextClass();
+        $unCamelizedControllerName = $texClass::uncamelize($this->moduleUniqueID, '-');
         $menuSettings              = PbxSettings::findFirstByKey($menuSettingsKey);
         if ($menuSettings === null) {
             $menuSettings      = new PbxSettings();
