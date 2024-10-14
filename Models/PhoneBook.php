@@ -1,17 +1,26 @@
 <?php
-/**
- * Copyright © MIKO LLC - All Rights Reserved
- * Unauthorized copying of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by Alexey Portnov, 12 2019
+
+/*
+ * MikoPBX - free phone system for small business
+ * Copyright © 2017-2024 Alexey Portnov and Nikolay Beketov
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
  */
-
-
 namespace Modules\ModulePhoneBook\Models;
 
 use MikoPBX\Modules\Models\ModulesModelsBase;
 use Modules\ModulePhoneBook\Lib\MikoPBXVersion;
-
 
 /**
  * Class PhoneBook
@@ -26,7 +35,6 @@ use Modules\ModulePhoneBook\Lib\MikoPBXVersion;
  */
 class PhoneBook extends ModulesModelsBase
 {
-
     /**
      * @Primary
      * @Identity
@@ -56,6 +64,12 @@ class PhoneBook extends ModulesModelsBase
      */
     public $call_id;
 
+    /**
+     * Initializes the model by setting the source table,
+     * calling the parent initializer, and enabling dynamic updates.
+     *
+     * @return void
+     */
     public function initialize(): void
     {
         $this->setSource('m_PhoneBook');
@@ -64,14 +78,20 @@ class PhoneBook extends ModulesModelsBase
     }
 
 
+    /**
+     * Validates the instance by ensuring the uniqueness of the 'number' attribute.
+     *
+     * @return bool Returns true if validation passes, otherwise false.
+     */
     public function validation(): bool
     {
         $validationClass = MikoPBXVersion::getValidationClass();
         $uniquenessClass = MikoPBXVersion::getUniquenessClass();
         $validation = new $validationClass();
+
         $validation->add(
             'number',
-            $uniquenessClass(
+            new $uniquenessClass(
                 [
                     'message' => $this->t('module_phnbk_AlreadyExistWithThisNumber', ['repesent' => $this->number_rep]),
                 ]

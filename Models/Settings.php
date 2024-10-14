@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright © MIKO LLC - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
@@ -17,7 +18,6 @@ use MikoPBX\Modules\Models\ModulesModelsBase;
 
 class Settings extends ModulesModelsBase
 {
-
     /**
      * @Primary
      * @Identity
@@ -26,11 +26,11 @@ class Settings extends ModulesModelsBase
     public $id;
 
     /**
-     * Toggle
+     * Disable Input Mask
      *
      * @Column(type="integer", default="0", nullable=true)
      */
-    public $toggle_field;
+    public $disableInputMask;
 
 
     public function initialize(): void

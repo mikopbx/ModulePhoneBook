@@ -14,10 +14,12 @@ const ModulePhoneBook = {
 	$checkBoxes: $('#module-phonebook-form .ui.checkbox'),
 	$disabilityFields: $('#module-phonebook-form  .disability'),
 	$statusToggle: $('#module-status-toggle'),
+	$disableInputMaskToggle: $('#disableInputMask'),
 	$moduleStatus: $('#status'),
 	$globalSearch: $('#globalsearch'),
 	$recordsTable: $('#phonebook-table'),
 	$addNewButton: $('#add-new-button'),
+	$tabMenu: $('#module-phonebook-menu .item'),
 	inputNumberJQTPL: 'input.number-input',
 	getNewRecordsAJAXUrl: `${globalRootUrl}module-phone-book/getNewRecords`,
 	deleteRecordAJAXUrl: `${globalRootUrl}module-phone-book/delete`,
@@ -26,6 +28,10 @@ const ModulePhoneBook = {
 	validateRules: {
 	},
 	initialize() {
+		ModulePhoneBook.$tabMenu.tab();
+
+		ModulePhoneBook.$checkBoxes.checkbox();
+
 		ModulePhoneBook.checkStatusToggle();
 		window.addEventListener('ModuleStatusChanged', ModulePhoneBook.checkStatusToggle);
 
@@ -252,6 +258,9 @@ const ModulePhoneBook = {
 	 * Инициализирует красивое представление номеров
 	 */
 	initializeInputmask($el) {
+		if (ModulePhoneBook.$disableInputMaskToggle.checkbox('is checked')){
+			return;
+		}
 		if (ModulePhoneBook.$maskList === null) {
 			// Подготовим таблицу для сортировки
 			ModulePhoneBook.$maskList = $.masksSort(InputMaskPatterns, ['#'], /[0-9]|#/, 'mask');

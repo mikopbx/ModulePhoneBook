@@ -3,7 +3,7 @@
   "moduleUniqueID":"ModulePhoneBook",
   "support_email": "help@miko.ru",
   "version": "%ModuleVersion%",
-  "min_pbx_version": "2020.2.757",
+  "min_pbx_version": "2023.2.757",
   "wiki_links": {
     "ru": {
       "https://wiki.mikopbx.com/module-phone-book": "https://wiki.mikopbx.com/ru/module-phone-book"

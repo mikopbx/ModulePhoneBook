@@ -2,8 +2,8 @@
     "name": "mikopbx/modulephonebook",
     "description": "ModulePhoneBook",
     "require": {
-        "php": "^7.4 || ^8.0",
-        "mikopbx/core": ">=2020.2.757"
+        "php": "^7.4||^8.3",
+        "phpoffice/phpspreadsheet": "^3.3"
     },
     "autoload": {
         "psr-4": {
@@ -54,9 +54,6 @@
         }
     ],
     "config": {
-        "sort-packages": true,
-        "platform": {
-            "php": "^7.4 || ^8.0"
-        }
+        "sort-packages": true
     }
 }
