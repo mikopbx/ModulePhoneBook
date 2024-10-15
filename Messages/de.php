@@ -42,4 +42,7 @@ return [
     'module_phnbk_Approve' => 'Alles löschen',
     'module_phnbk_GeneraLFileUploadError' => 'Fehler beim Hochladen der Datei',
     'module_phnbk_UploadError' => 'Fehler beim Herunterladen der Datei',
+    'module_phnbk_AllRecordsDeleted' => 'Alle Einträge wurden gelöscht',
+    'module_phnbk_RecognitionFinished' => 'Das Laden der Daten ist abgeschlossen',
+    'module_phnbk_RecognitionOnProgress' => 'Daten aus einer Datei analysieren und laden',
 ];
