@@ -42,4 +42,7 @@ return [
     'module_phnbk_invalidFormat' => 'Erro no formato do arquivo',
     'module_phnbk_DeleteAllTitle' => 'Atenção!',
     'module_phnbk_DeleteAllDescription' => 'Todas as entradas da lista telefônica serão excluídas permanentemente; se você precisar excluir uma ou mais entradas, use o botão na tabela.',
+    'module_phnbk_AllRecordsDeleted' => 'Todas as entradas foram excluídas',
+    'module_phnbk_RecognitionOnProgress' => 'Analisando e carregando dados de um arquivo',
+    'module_phnbk_RecognitionFinished' => 'Carregamento de dados concluído',
 ];
