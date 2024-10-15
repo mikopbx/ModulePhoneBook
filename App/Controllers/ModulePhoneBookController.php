@@ -25,36 +25,34 @@ use MikoPBX\AdminCabinet\Providers\AssetProvider;
 use Modules\ModulePhoneBook\App\Forms\ModuleConfigForm;
 use Modules\ModulePhoneBook\Models\PhoneBook;
 use Modules\ModulePhoneBook\Models\Settings;
-use PhpOffice\PhpSpreadsheet\IOFactory;
-use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
-use Phalcon\Http\Request\File as PhalconFile;
 
 class ModulePhoneBookController extends BaseController
 {
     private $moduleUniqueID = 'ModulePhoneBook';
 
     /**
-     * Basic initial class
-     */
-    public function initialize(): void
-    {
-        if ($this->request->isAjax() === false) {
-            $this->view->logoImagePath = "{$this->url->get()}assets/img/cache/{$this->moduleUniqueID}/logo.svg";
-            $this->view->submitMode = null;
-        }
-        parent::initialize();
-    }
-
-    /**
-     * Index page controller
+     * Controller for the index page.
      */
     public function indexAction(): void
     {
+        $this->view->logoImagePath = "{$this->url->get()}assets/img/cache/{$this->moduleUniqueID}/logo.svg";
+        $this->view->submitMode = null;
+
+        // Add necessary CSS files
         $headerCollectionCSS = $this->assets->collection(AssetProvider::HEADER_CSS);
         $headerCollectionCSS
             ->addCss('css/vendor/datatable/dataTables.semanticui.min.css', true)
             ->addCss("css/cache/{$this->moduleUniqueID}/module-phonebook.css", true);
 
+        // Add Semantic UI modal CSS
+        $semanticCollectionCSS = $this->assets->collection(AssetProvider::SEMANTIC_UI_CSS);
+        $semanticCollectionCSS->addCss('css/vendor/semantic/modal.min.css', true);
+
+        // Add Semantic UI modal JS
+        $semanticCollectionJS = $this->assets->collection(AssetProvider::SEMANTIC_UI_JS);
+        $semanticCollectionJS->addJs('js/vendor/semantic/modal.min.js', true);
+
+        // Add JS files required for this page
         $footerCollection = $this->assets->collection(AssetProvider::FOOTER_JS);
         $footerCollection
             ->addJs('js/vendor/inputmask/inputmask.js', true)
@@ -63,18 +61,24 @@ class ModulePhoneBookController extends BaseController
             ->addJs('js/vendor/inputmask/bindings/inputmask.binding.js', true)
             ->addJs('js/vendor/datatable/dataTables.semanticui.js', true)
             ->addJs('js/pbx/Extensions/input-mask-patterns.js', true)
-            ->addJs("js/cache/{$this->moduleUniqueID}/module-phonebook-index.js", true);
+            ->addJs("js/cache/{$this->moduleUniqueID}/module-phonebook-status.js", true)
+            ->addJs("js/cache/{$this->moduleUniqueID}/module-phonebook-index.js", true)
+            ->addJs("js/cache/{$this->moduleUniqueID}/module-phonebook-settings.js", true)
+            ->addJs("js/cache/{$this->moduleUniqueID}/module-phonebook-merging-worker.js", true)
+            ->addJs("js/cache/{$this->moduleUniqueID}/module-phonebook-import.js", true)
+            ->addJs("js/cache/{$this->moduleUniqueID}/module-phonebook-datatable.js", true);
 
         $settings = Settings::findFirst();
         if ($settings === null) {
             $settings = new Settings();
             $settings->disableInputMask = '0';
         }
+
         $this->view->form = new ModuleConfigForm($settings);
     }
 
     /**
-     * Запрос нового пакета истории разговоров для DataTable JSON
+     * Request new call history records for DataTable in JSON format.
      */
     public function getNewRecordsAction(): void
     {
@@ -82,12 +86,13 @@ class ModulePhoneBookController extends BaseController
         $position = $this->request->getPost('start');
         $recordsPerPage = $this->request->getPost('length');
         $searchPhrase = $this->request->getPost('search');
+
         $this->view->draw = $currentPage;
         $this->view->recordsTotal = 0;
         $this->view->recordsFiltered = 0;
         $this->view->data = [];
 
-        // Посчитаем количество уникальных записей в таблице телефонов
+        // Count the total number of unique records in the phonebook table
         $parameters['columns'] = 'COUNT(*) as rows';
         $recordsTotalReq = PhoneBook::findFirst($parameters);
         if ($recordsTotalReq !== null) {
@@ -96,13 +101,10 @@ class ModulePhoneBookController extends BaseController
         } else {
             return;
         }
-        // Посчитаем количество записей с учетом фильтра
+
+        // Count the number of records based on the search filter
         if (!empty($searchPhrase['value'])) {
             $this->prepareConditionsForSearchPhrases($searchPhrase['value'], $parameters);
-            // Если мы не смогли расшифровать строку запроса вернем пустой результата
-            if (empty($parameters['conditions'])) {
-                return;
-            }
         }
         $recordsFilteredReq = PhoneBook::findFirst($parameters);
         if ($recordsFilteredReq !== null) {
@@ -110,7 +112,7 @@ class ModulePhoneBookController extends BaseController
             $this->view->recordsFiltered = $recordsFiltered;
         }
 
-        // Найдем все записи подходящие под заданный фильтр
+        // Retrieve all records that match the filter criteria
         $parameters['columns'] = [
             'call_id',
             'number' => 'number_rep',
@@ -119,59 +121,47 @@ class ModulePhoneBookController extends BaseController
         $parameters['order'] = ['call_id desc'];
         $parameters['limit'] = $recordsPerPage;
         $parameters['offset'] = $position;
+
         $records = PhoneBook::find($parameters);
         $this->view->data = $records->toArray();
     }
 
-
     /**
-     * Подготовка параметров запроса для фильтрации записей телефонной книги
+     * Prepare search conditions for filtering phonebook records.
      *
-     * @param $searchPhrase - поисковая фраза, которую ввел пользователь
-     * @param $parameters - параметры запроса к телефонной кнгие
+     * @param string $searchPhrase The search phrase entered by the user
+     * @param array $parameters The query parameters to filter the phonebook records
      */
-    private function prepareConditionsForSearchPhrases(&$searchPhrase, &$parameters): void
+    private function prepareConditionsForSearchPhrases(string &$searchPhrase, array &$parameters): void
     {
-        $parameters['conditions'] = '';
-
-        // Поищем номер телефона
-        $searchPhrase = str_replace(['(', ')', '-', '+'], '', $searchPhrase);
-        if (preg_match_all("/\d+/", $searchPhrase, $matches)) {
-            if (count($matches[0]) === 1) {
-                $seekNumber = '1' . substr($matches[0][0], -9);
-                $parameters['conditions'] = 'number LIKE :SearchPhrase:';
-                $parameters['bind']['SearchPhrase'] = "%{$seekNumber}%";
-            }
-            $searchPhrase = str_replace($matches[0][0], '', $searchPhrase);
-        }
-
-        // Ищем по caller_id
-        if (preg_match_all('/^([а-яА-ЯЁёa-zA-Z0-9_ ]+)$/u', $searchPhrase, $matches) && count($matches[0]) > 0) {
-            $parameters['conditions'] = 'call_id like :SearchPhrase1:';
-            $parameters['bind']['SearchPhrase1'] = "%{$matches[0][0]}%";
-        }
+        $parameters['conditions'] = 'search_index like :SearchPhrase:';
+        $parameters['bind']['SearchPhrase'] = "%$searchPhrase%";
     }
 
     /**
-     * Save settings AJAX action
+     * Save settings via an AJAX request.
      */
     public function saveAction(): void
     {
         if (!$this->request->isPost()) {
             return;
         }
-        $data = $this->request->getPost();
 
-        if (empty($data['call_id']) || empty($data['number'])) {
+        $dataId = $this->request->getPost('id', ['string', 'trim']);
+        $callId = $this->request->getPost('call_id', ['string', 'trim']);
+        $number = $this->request->getPost('number', ['alphanum']);
+        $numberRep = $this->request->getPost('number_rep', ['string', 'trim'], $number);
+
+        if (empty($callId) || empty($number)) {
             return;
         }
 
-        // We haven't ability to change primary filed, we have to delete it and recreate
+        // If we are unable to change the primary field, delete the old record and recreate it
         $oldId = null;
         $record = null;
-        if (stripos($data['id'], 'new') === false) {
-            $record = PhoneBook::findFirstById($data['id']);
-            if ($record->number !== $data['number']) {
+        if (stripos($dataId, 'new') === false) {
+            $record = PhoneBook::findFirstById($dataId);
+            if ($record->number !== $number) {
                 $oldId = $record->id;
                 $record->delete();
                 $record = null;
@@ -186,12 +176,23 @@ class ModulePhoneBookController extends BaseController
             switch ($key) {
                 case 'id':
                     break;
+                case 'number':
+                    $record->number = $number;
+                    break;
+                case 'number_rep':
+                    $record->number_rep = $numberRep;
+                    break;
+                case 'call_id':
+                    $record->call_id = $callId;
+                    break;
+                case 'search_index':
+                    // Collect data for the search index
+                    $username = mb_strtolower($callId);
+                    // Combine all fields into a single string
+                    $record->search_index = $username . $number . $numberRep;
+                    break;
                 default:
-                    if (array_key_exists($key, $data)) {
-                        $record->$key = $data[$key];
-                    } else {
-                        $record->$key = '';
-                    }
+                    break;
             }
         }
 
@@ -202,14 +203,15 @@ class ModulePhoneBookController extends BaseController
 
             return;
         }
+
         $this->view->data = ['oldId' => $oldId, 'newId' => $record->id];
         $this->view->success = true;
     }
 
     /**
-     * Delete phonebook record
+     * Delete a phonebook record.
      *
-     * @param string|null $id record ID
+     * @param string|null $id The record ID to delete
      */
     public function deleteAction(?string $id = null): void
     {
@@ -217,85 +219,47 @@ class ModulePhoneBookController extends BaseController
         if ($record !== null && !$record->delete()) {
             $this->flash->error(implode('<br>', $record->getMessages()));
             $this->view->success = false;
-
             return;
         }
         $this->view->success = true;
     }
 
     /**
-     * Upload and import phonebook records from an Excel file
+     * Delete all phonebook records.
      */
-    public function importFromExcelAction(): void
+    public function deleteAllRecordsAction(): void
     {
-        // Проверка на наличие загруженного файла
-        if (!$this->request->hasFiles()) {
-            $this->flash->error("No file uploaded");
-            return;
-        }
-
-        $uploadedFile = $this->request->getUploadedFiles()[0]; // Получаем первый загруженный файл
-        if (!$this->validateFile($uploadedFile)) {
-            $this->flash->error("Invalid file format");
-            return;
-        }
-        include_once __DIR__ . '/../../vendor/autoload.php';
-        // Загружаем файл и парсим его
-        try {
-            $spreadsheet = IOFactory::load($uploadedFile->getTempName());
-            $sheet = $spreadsheet->getActiveSheet();
-
-            // Получаем количество строк
-            $highestRow = $sheet->getHighestDataRow();
-            $highestColumn = $sheet->getHighestDataColumn();
-            $highestColumnIndex = Coordinate::columnIndexFromString($highestColumn);
-
-            // Пробегаемся по каждой строке и колонке
-            for ($row = 2; $row <= $highestRow; ++$row) {
-                $callId = $sheet->getCell([1, $row])->getValue();
-                $numberRep = $sheet->getCell([2, $row])->getValue();
-                $number = preg_replace('/\D+/', '', $numberRep); // Очищаем от нецифровых символов
-
-                // Добавляем запись в базу данных
-                $this->savePhonebookRecord($callId, $numberRep, $number);
+        $records = PhoneBook::find();
+        foreach ($records as $record) {
+            if (!$record->delete()) {
+                $this->flash->error(implode('<br>', $record->getMessages()));
+                $this->view->success = false;
+                return;
             }
-        } catch (\Exception $e) {
-            $this->flash->error("Error loading Excel file: " . $e->getMessage());
         }
-        $this->forward('module-phone-book/module-phone-book/index/');
+        $this->view->success = true;
     }
 
     /**
-     * Validate uploaded file format
-     * @param PhalconFile $file
-     * @return bool
+     * Toggle input mask feature.
      */
-    private function validateFile(PhalconFile $file): bool
+    public function toggleDisableInputMaskAction(): void
     {
-        $validMimeTypes = [
-            'application/vnd.ms-excel',  // xls
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'  // xlsx
-        ];
-        return in_array($file->getType(), $validMimeTypes);
-    }
-
-    /**
-     * Save a single phonebook record to the database
-     * @param string $callId
-     * @param string $numberRep
-     * @param string $number
-     */
-    private function savePhonebookRecord(string $callId, string $numberRep, string $number): void
-    {
-        $record = new PhoneBook();
-        $record->call_id = $callId;
-        $record->number_rep = $numberRep;
-        $record->number = $number;
-
-        if (!$record->save()) {
-            $errors = implode('<br>', $record->getMessages());
-            $message = $this->translation->_("module_phnbk_ImportError");
-            $this->flash->error("$message: $errors");
+        if (!$this->request->isPost()) {
+            return;
         }
+
+        $settings = Settings::findFirst();
+        if ($settings === null) {
+            $settings = new Settings();
+        }
+
+        $settings->disableInputMask = $this->request->getPost('disableInputMask') ? '1' : '0';
+        if (!$settings->save()) {
+            $this->flash->error(implode('<br>', $settings->getMessages()));
+            $this->view->success = false;
+            return;
+        }
+        $this->view->success = true;
     }
 }

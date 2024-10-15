@@ -65,6 +65,13 @@ class PhoneBook extends ModulesModelsBase
     public $call_id;
 
     /**
+     * Field with search words for full text search, consist of username, number, mobile in lower case
+     *
+     * @Column(type="string", nullable=true, default="")
+     */
+    public ?string $search_index = "";
+
+    /**
      * Initializes the model by setting the source table,
      * calling the parent initializer, and enabling dynamic updates.
      *

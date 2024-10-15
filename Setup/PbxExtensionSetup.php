@@ -20,11 +20,41 @@
 namespace Modules\ModulePhoneBook\Setup;
 
 use MikoPBX\Common\Models\PbxSettings;
+use MikoPBX\Core\System\SystemMessages;
 use MikoPBX\Modules\Setup\PbxExtensionSetupBase;
 use Modules\ModulePhoneBook\Lib\MikoPBXVersion;
+use Modules\ModulePhoneBook\Models\PhoneBook;
 
 class PbxExtensionSetup extends PbxExtensionSetupBase
 {
+    /**
+     * Creates the database structure according to models' annotations.
+     * If necessary, it fills some default settings and changes the sidebar menu item representation for this module.
+     * After installation, it registers the module on the PbxExtensionModules model.
+     * @see https://docs.mikopbx.com/mikopbx-development/module-developement/module-installer#fixfilesrights
+     *
+     * @return bool The result of the installation process.
+     */
+    public function installDB(): bool
+    {
+        $result = parent::installDB();
+
+        if ($result) {
+            $records = PhoneBook::find();
+            foreach ($records as $record) {
+                // Collect data for the search index
+                $username = mb_strtolower($record->call_id);
+                // Combine all fields into a single string
+                $record->search_index =  $username . $record->number . $record->number_rep;
+                $result = $record->save();
+                if (!$result) {
+                    SystemMessages::sysLogMsg(__METHOD__, implode(' ', $result->getMessages()));
+                    return false;
+                }
+            }
+        }
+        return $result;
+    }
     /**
      * Добавляет модуль в боковое меню
      *
@@ -42,8 +72,8 @@ class PbxExtensionSetup extends PbxExtensionSetupBase
         }
         $value               = [
             'uniqid'        => $this->moduleUniqueID,
-            'href'          => "/admin-cabinet/$unCamelizedControllerName",
-            'group'         => 'modules',
+            'href'          => "/admin-cabinet/$unCamelizedControllerName/$unCamelizedControllerName/index",
+            'group'         => 'setup',
             'iconClass'     => 'address book',
             'caption'       => "Breadcrumb$this->moduleUniqueID",
             'showAtSidebar' => true,

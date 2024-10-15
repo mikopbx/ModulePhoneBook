@@ -2,7 +2,7 @@
     "name": "mikopbx/modulephonebook",
     "description": "ModulePhoneBook",
     "require": {
-        "php": "^7.4||^8.3",
+        "php": "^7.4",
         "phpoffice/phpspreadsheet": "1.29.2"
     },
     "autoload": {
@@ -54,6 +54,9 @@
         }
     ],
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "platform": {
+            "php": "7.4.0"
+        }
     }
 }

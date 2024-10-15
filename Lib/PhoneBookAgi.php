@@ -26,22 +26,37 @@ use Modules\ModulePhoneBook\Models\PhoneBook;
 use Phalcon\Di\Injectable;
 
 /**
- * Class PhoneBook
+ * Class PhoneBookAgi
+ * Handles setting the caller ID for inbound and outbound calls using the phonebook.
  */
 class PhoneBookAgi extends Injectable
 {
+    /**
+     * Set the caller ID or connected line ID based on the type of call (inbound or outbound)
+     *
+     * @param string $type The type of the call: 'in' for inbound calls or 'out' for outbound calls
+     * @return void
+     */
     public static function setCallerID(string $type): void
     {
         try {
-            $agi    = new AGI();
+            $agi = new AGI();
+
+            // For inbound calls, use the caller's number; for outbound, use the extension number
             if ($type === 'in') {
                 $number = $agi->request['agi_callerid'];
             } else {
                 $number = $agi->request['agi_extension'];
             }
+
+            // Normalize the phone number to match the expected format (last 9 digits)
             $number = '1' . substr($number, -9);
+
+            // Find the corresponding phonebook entry by the number
             $result = PhoneBook::findFirstByNumber($number);
-            if ($result !== null && ! empty($result->call_id)) {
+
+            // If a matching record is found and the call_id is not empty, set the appropriate caller ID
+            if ($result !== null && !empty($result->call_id)) {
                 if ($type === 'in') {
                     $agi->set_variable('CALLERID(name)', $result->call_id);
                 } else {
@@ -49,6 +64,7 @@ class PhoneBookAgi extends Injectable
                 }
             }
         } catch (\Throwable $e) {
+            // Log the error message if an exception occurs
             Util::sysLogMsg('PhoneBookAGI', $e->getMessage(), LOG_ERR);
         }
     }

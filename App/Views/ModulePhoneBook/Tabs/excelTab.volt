@@ -13,12 +13,23 @@
         <li>{{ t._('module_phnbk_ExcelInstructionStep4') }}</li>
     </ul>
 </div>
-<form action="{{ url('module-phone-book/module-phone-book/importFromExcel') }}" method="post" enctype="multipart/form-data"
-      class="ui form">
-    <div class="field">
-        <label for="file">{{ t._('module_phnbk_ImportFromExcelLabel') }}</label>
-        <input type="file" name="file" id="file" accept=".xls,.xlsx" required>
+
+<div class="field">
+    <label>{{ t._('module_phnbk_ImportFromExcelLabel') }}</label>
+    <div class="ui action input">
+        <input type="text" readonly>
+        <input type="file" name="update-file" accept=".xls,.xlsx" style="display: none!important;"/>
+        <div class="ui icon button">
+            <i class="cloud upload alternate icon"></i>
+        </div>
     </div>
-    <button type="submit" class="ui green button">{{ t._('module_phnbk_ImportFromExcel') }}</button>
-</form>
+</div>
+<div class="field">
+    <div class="ui indicating progress" id="upload-progress-bar">
+        <div class="bar">
+            <div class="progress"></div>
+        </div>
+        <div class="label" id="upload-progress-bar-label"></div>
+    </div>
+</div>
 

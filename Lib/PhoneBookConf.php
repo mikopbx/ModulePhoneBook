@@ -26,61 +26,73 @@ use MikoPBX\PBXCoreREST\Lib\PBXApiResult;
 
 /**
  * Class PhoneBookConf
+ * Handles phone book configuration for the module
  */
 class PhoneBookConf extends ConfigClass
 {
     /**
-     *  Process CoreAPI requests under root rights
+     * Process CoreAPI requests with root privileges
      *
-     * @param array $request
-     *
-     * @return PBXApiResult An object containing the result of the API call.
+     * @param array $request The request data passed to the API
+     * @return PBXApiResult An object containing the result of the API call
      */
     public function moduleRestAPICallback(array $request): PBXApiResult
     {
         $res = new PBXApiResult();
         $res->processor = __METHOD__;
         $action = strtoupper($request['action']);
+        $data = $request['data'];
+
         switch ($action) {
+            case 'IMPORT-FROM-EXCEL':
+                $processor = new PhoneBookImport();
+                $res = $processor->run($data['uploadedFilePath']);
+                break;
             default:
                 $res->success = false;
                 $res->messages[] = 'API action not found in moduleRestAPICallback ModulePhoneBook';
         }
+
         return $res;
     }
 
     /**
-     * Кастомизация входящего контекста для конкретного маршрута.
+     * Customize the incoming route context for a specific route
      *
-     * @param $rout_number
-     *
-     * @return string
+     * @param string $rout_number The route number
+     * @return string The generated incoming route context
      */
     public function generateIncomingRoutBeforeDial($rout_number): string
     {
         return "same => n,AGI({$this->moduleDir}/agi-bin/agi_phone_book.php,in)" . PHP_EOL;
     }
 
+    /**
+     * Generate the outgoing route context for a specific route
+     *
+     * @param array $rout The route configuration array
+     * @return string The generated outgoing route context
+     */
     public function generateOutRoutContext(array $rout): string
     {
         return 'same => n,Set(CONNECTED_LINE_SEND_SUB=phone-book-out,${EXTEN},1)' . "\n\t";
     }
 
     /**
-     * Prepares additional contexts sections in the extensions.conf file
+     * Prepares additional context sections in the extensions.conf file
      *
-     * @return string
+     * @return string The context generated for phone book operations in extensions.conf
      */
     public function extensionGenContexts(): string
     {
         // Set(CONNECTEDLINE(name,i)=Zavod)
-        return  '[phone-book-out]' . PHP_EOL .
+        return '[phone-book-out]' . PHP_EOL .
             'exten => ' . ExtensionsConf::ALL_NUMBER_EXTENSION . ",1,AGI({$this->moduleDir}/agi-bin/agi_phone_book.php,out)\n\t" .
             'same => n,return' . PHP_EOL;
     }
 
     /**
-     * Process after enables action in web interface
+     * Triggered after the module is enabled in the web interface
      *
      * @return void
      */
