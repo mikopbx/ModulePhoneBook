@@ -17,4 +17,19 @@ return [
  *
  */
     'repModulePhoneBook' => 'Μονάδα τηλεφωνικού καταλόγου - %repesent%',
+    'module_phnbk_Search' => 'Εύρημα...',
+    'module_phnbk_ImportFromExcel' => 'Εισαγωγή',
+    'module_phnbk_ImportExcelTab' => 'Εισαγωγή από το Excel',
+    'module_phnbk_PhonebookTab' => 'Τηλεφωνικός κατάλογος',
+    'module_phnbk_ImportFromExcelLabel' => 'Επιλέξτε αρχείο Excel για λήψη',
+    'module_phnbk_ExcelInstructionStep4' => 'Βεβαιωθείτε ότι τα δεδομένα στο αρχείο είναι σωστά πριν το ανεβάσετε.',
+    'module_phnbk_ImportError' => 'Σφάλμα κατά την αποθήκευση της καταχώρισης',
+    'module_phnbk_SettingsTab' => 'Ρυθμίσεις',
+    'module_phnbk_ExcelInstructionHeader' => 'Οδηγίες για τη λήψη ενός τηλεφωνικού καταλόγου από το Excel',
+    'module_phnbk_ExcelInstructionStep1' => 'Το αρχείο πρέπει να έχει τη μορφή <strong>.xls</strong> ή <strong>.xlsx.</strong>',
+    'module_phnbk_ExcelInstructionStep2' => 'Το αρχείο πρέπει να περιέχει δύο στήλες:',
+    'module_phnbk_ExcelInstructionStep2_1' => '<strong>CallerID</strong> - όνομα συνδρομητή (για παράδειγμα: Ivan Ivanov).',
+    'module_phnbk_ExcelInstructionStep2_2' => '<strong>Αριθμός τηλεφώνου</strong> - σε μορφή <em>+7(926)123-45-67</em>.',
+    'module_phnbk_ExcelInstructionStep3' => 'Κάθε γραμμή αντιπροσωπεύει μια καταχώρηση τηλεφωνικού καταλόγου.',
+    'module_phnbk_disableInputMask' => 'Απενεργοποιήστε τη μάσκα αριθμού',
 ];
