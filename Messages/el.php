@@ -42,4 +42,7 @@ return [
     'module_phnbk_DeleteAllTitle' => 'Προσοχή!',
     'module_phnbk_CancelBtn' => 'Ματαίωση',
     'module_phnbk_Approve' => 'Διαγράψτε τα πάντα',
+    'module_phnbk_AllRecordsDeleted' => 'Όλες οι καταχωρήσεις έχουν διαγραφεί',
+    'module_phnbk_RecognitionOnProgress' => 'Ανάλυση και φόρτωση δεδομένων από ένα αρχείο',
+    'module_phnbk_RecognitionFinished' => 'Η φόρτωση δεδομένων ολοκληρώθηκε',
 ];
