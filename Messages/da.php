@@ -42,4 +42,7 @@ return [
     'module_phnbk_GeneraLFileUploadError' => 'Fejl under upload af fil',
     'module_phnbk_UploadError' => 'Fejl ved download af fil',
     'module_phnbk_UploadInProgress' => 'Uploader en fil til serveren',
+    'module_phnbk_AllRecordsDeleted' => 'Alle poster er blevet slettet',
+    'module_phnbk_RecognitionOnProgress' => 'Parsing og indlæsning af data fra en fil',
+    'module_phnbk_RecognitionFinished' => 'Dataindlæsning afsluttet',
 ];
