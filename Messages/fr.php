@@ -42,4 +42,7 @@ return [
     'module_phnbk_GeneraLFileUploadError' => 'Erreur lors du téléchargement du fichier',
     'module_phnbk_UploadError' => 'Erreur de téléchargement de fichier',
     'module_phnbk_UploadInProgress' => 'Télécharger un fichier sur le serveur',
+    'module_phnbk_AllRecordsDeleted' => 'Toutes les entrées ont été supprimées',
+    'module_phnbk_RecognitionOnProgress' => 'Analyser et charger des données à partir d\'un fichier',
+    'module_phnbk_RecognitionFinished' => 'Chargement des données terminé',
 ];
