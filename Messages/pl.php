@@ -42,4 +42,7 @@ return [
     'module_phnbk_GeneraLFileUploadError' => 'Błąd przesyłania pliku',
     'module_phnbk_UploadError' => 'Błąd pobierania pliku',
     'module_phnbk_UploadInProgress' => 'Przesyłanie pliku na serwer',
+    'module_phnbk_AllRecordsDeleted' => 'Wszystkie wpisy zostały usunięte',
+    'module_phnbk_RecognitionOnProgress' => 'Parsowanie i ładowanie danych z pliku',
+    'module_phnbk_RecognitionFinished' => 'Ładowanie danych zakończone',
 ];
