@@ -42,4 +42,7 @@ return [
     'module_phnbk_invalidFormat' => 'Eroare de format de fișier',
     'module_phnbk_DeleteAllTitle' => 'Atenţie!',
     'module_phnbk_GeneraLFileUploadError' => 'Eroare la încărcarea fișierului',
+    'module_phnbk_AllRecordsDeleted' => 'Toate intrările au fost șterse',
+    'module_phnbk_RecognitionOnProgress' => 'Analizarea și încărcarea datelor dintr-un fișier',
+    'module_phnbk_RecognitionFinished' => 'Încărcarea datelor s-a încheiat',
 ];
