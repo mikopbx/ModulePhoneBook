@@ -42,4 +42,7 @@ return [
     'module_phnbk_GeneraLFileUploadError' => 'Error al cargar el archivo',
     'module_phnbk_UploadError' => 'error de descarga de archivos',
     'module_phnbk_UploadInProgress' => 'Subir un archivo al servidor',
+    'module_phnbk_AllRecordsDeleted' => 'Todas las entradas han sido eliminadas.',
+    'module_phnbk_RecognitionOnProgress' => 'Analizar y cargar datos desde un archivo',
+    'module_phnbk_RecognitionFinished' => 'Carga de datos completada',
 ];
