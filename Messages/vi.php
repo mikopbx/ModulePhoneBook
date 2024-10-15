@@ -42,4 +42,7 @@ return [
     'module_phnbk_GeneraLFileUploadError' => 'Lỗi tải tập tin lên',
     'module_phnbk_UploadError' => 'Lỗi tải tập tin',
     'module_phnbk_UploadInProgress' => 'Tải một tập tin lên máy chủ',
+    'module_phnbk_AllRecordsDeleted' => 'Tất cả các mục đã bị xóa',
+    'module_phnbk_RecognitionOnProgress' => 'Phân tích cú pháp và tải dữ liệu từ một tập tin',
+    'module_phnbk_RecognitionFinished' => 'Tải dữ liệu hoàn tất',
 ];
