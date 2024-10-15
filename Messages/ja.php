@@ -42,4 +42,7 @@ return [
     'module_phnbk_invalidFormat' => 'ファイル形式エラー',
     'module_phnbk_DeleteAllTitle' => '注意！',
     'module_phnbk_DeleteAllDescription' => 'すべての電話帳エントリは完全に削除されます。1 つまたは複数のエントリを削除する必要がある場合は、表内のボタンを使用します。',
+    'module_phnbk_AllRecordsDeleted' => 'すべてのエントリが削除されました',
+    'module_phnbk_RecognitionOnProgress' => 'ファイルからのデータの解析とロード',
+    'module_phnbk_RecognitionFinished' => 'データ読み込み完了',
 ];
