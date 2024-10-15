@@ -42,4 +42,7 @@ return [
     'module_phnbk_GeneraLFileUploadError' => 'Det gick inte att ladda upp filen',
     'module_phnbk_UploadError' => 'Filnedladdningsfel',
     'module_phnbk_UploadInProgress' => 'Laddar upp en fil till servern',
+    'module_phnbk_AllRecordsDeleted' => 'Alla poster har raderats',
+    'module_phnbk_RecognitionOnProgress' => 'Analysera och ladda data från en fil',
+    'module_phnbk_RecognitionFinished' => 'Dataladdningen slutförd',
 ];
