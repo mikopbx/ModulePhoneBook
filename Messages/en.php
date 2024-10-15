@@ -42,4 +42,7 @@ return [
     'module_phnbk_GeneraLFileUploadError' => 'Error loading file',
     'module_phnbk_UploadError' => 'File upload error',
     'module_phnbk_UploadInProgress' => 'Uploading a file to the server',
+    'module_phnbk_AllRecordsDeleted' => 'All entries have been deleted',
+    'module_phnbk_RecognitionOnProgress' => 'Parsing and loading data from a file',
+    'module_phnbk_RecognitionFinished' => 'Data loading completed',
 ];
