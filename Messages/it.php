@@ -42,4 +42,7 @@ return [
     'module_phnbk_Approve' => 'Elimina tutto',
     'module_phnbk_GeneraLFileUploadError' => 'Errore durante il caricamento del file',
     'module_phnbk_UploadError' => 'Errore durante il download del file',
+    'module_phnbk_RecognitionFinished' => 'Caricamento dati completato',
+    'module_phnbk_AllRecordsDeleted' => 'Tutte le voci sono state cancellate',
+    'module_phnbk_RecognitionOnProgress' => 'Analisi e caricamento di dati da un file',
 ];
