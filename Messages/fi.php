@@ -42,4 +42,7 @@ return [
     'module_phnbk_UploadInProgress' => 'Tiedoston lataaminen palvelimelle',
     'module_phnbk_DeleteAllTitle' => 'Huomio!',
     'module_phnbk_DeleteAllDescription' => 'Kaikki puhelinluettelon merkinnät poistetaan pysyvästi, jos haluat poistaa yhden tai merkinnän, käytä taulukon painiketta.',
+    'module_phnbk_AllRecordsDeleted' => 'Kaikki merkinnät on poistettu',
+    'module_phnbk_RecognitionOnProgress' => 'Tietojen jäsentäminen ja lataaminen tiedostosta',
+    'module_phnbk_RecognitionFinished' => 'Tietojen lataus valmis',
 ];
