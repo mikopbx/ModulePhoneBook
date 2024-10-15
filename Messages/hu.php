@@ -42,4 +42,7 @@ return [
     'module_phnbk_DeleteAllDescription' => 'A telefonkönyv minden bejegyzése véglegesen törlődik, ha törölnie kell egy bejegyzést, használja a táblázatban található gombot.',
     'module_phnbk_CancelBtn' => 'Mégse',
     'module_phnbk_Approve' => 'Töröljön mindent',
+    'module_phnbk_AllRecordsDeleted' => 'Minden bejegyzés törölve lett',
+    'module_phnbk_RecognitionOnProgress' => 'Adatok elemzése és betöltése fájlból',
+    'module_phnbk_RecognitionFinished' => 'Az adatok betöltése befejeződött',
 ];
