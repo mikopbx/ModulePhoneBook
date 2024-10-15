@@ -9,3 +9,12 @@
 #phonebook-table .ui.input.inline-edit>input {
     cursor: text!important;
 }
+
+/** More extensions on one page */
+#phonebook-table td {
+    padding: .1em .6em;
+}
+
+#phonebook-table th {
+    padding: .4em .6em;
+}

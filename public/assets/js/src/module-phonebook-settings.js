@@ -36,7 +36,7 @@ const ModulePhoneBookSettings = {
 
         // Set up the checkbox for disabling/enabling the input mask
         ModulePhoneBookSettings.$disableInputMaskToggle.checkbox({
-            change: ModulePhoneBookSettings.onChangeInputMaskToggle
+            onChange: ModulePhoneBookSettings.onChangeInputMaskToggle
         });
 
         // Attach event listener for the "Delete All Records" button
@@ -57,6 +57,7 @@ const ModulePhoneBookSettings = {
                     return true; // Allows modal to close on "Cancel"
                 },
                 onApprove: () => {
+                    ModulePhoneBookSettings.$deleteAllRecordsButton.addClass('loading');
                     // On approval, send a request to delete all records
                     $.api({
                         url: ModulePhoneBookSettings.deleteAllRecordsAJAXUrl,
@@ -64,10 +65,13 @@ const ModulePhoneBookSettings = {
                         method: 'POST',
                         successTest: PbxApi.successTest,
                         onSuccess(response) {
-                            // Reload the page after successful deletion
-                            window.location.reload();
+                            ModulePhoneBookSettings.$deleteAllRecordsButton.removeClass('loading');
+                            UserMessage.showInformation(globalTranslate.module_phnbk_AllRecordsDeleted);
+                            // Reload the page after successful update
+                            ModulePhoneBookDT.dataTable.ajax.reload();
                         },
                         onFailure(response) {
+                            ModulePhoneBookSettings.$deleteAllRecordsButton.removeClass('loading');
                             // Show error message if deletion fails
                             UserMessage.showMultiString(response.messages);
                         },
@@ -93,7 +97,6 @@ const ModulePhoneBookSettings = {
             data: { disableInputMask: currentState },
             successTest: PbxApi.successTest,
             onSuccess(response) {
-                // Reload the page after successful update
                 window.location.reload();
             },
             onFailure(response) {

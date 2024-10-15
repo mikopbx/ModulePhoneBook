@@ -19,21 +19,75 @@
 /* global globalRootUrl, globalTranslate, SemanticLocalization, UserMessage, InputMaskPatterns */
 
 const ModulePhoneBookDT = {
+
+    /**
+     * The global search input element.
+     * @type {jQuery}
+     */
+    $globalSearch: $('#global-search'),
+
+    /**
+     * The page length selector.
+     * @type {jQuery}
+     */
+    $pageLengthSelector:$('#page-length-select'),
+
+    /**
+     * The page length selector.
+     * @type {jQuery}
+     */
+    $searchExtensionsInput: $('#search-extensions-input'),
+
+
+    /**
+     * The data table object.
+     * @type {Object}
+     */
+    dataTable: {},
+
+    /**
+     * The document body.
+     * @type {jQuery}
+     */
+    $body: $('body'),
+
     // Cached DOM elements
     $disableInputMaskToggle: $('#disable-input-mask'),
-    $globalSearch: $('#globalsearch'),
+
+    /**
+     * The extensions table element.
+     * @type {jQuery}
+     */
     $recordsTable: $('#phonebook-table'),
+
+    /**
+     * The add new button element.
+     * @type {jQuery}
+     */
     $addNewButton: $('#add-new-button'),
+
+    /**
+     * Selector for number input fields.
+     * @type {string}
+     */
     inputNumberJQTPL: 'input.number-input',
+
+    /**
+     * List of input masks.
+     * @type {null|Array}
+     */
     $maskList: null,
 
     // URLs for AJAX requests
     getNewRecordsAJAXUrl: `${globalRootUrl}module-phone-book/getNewRecords`,
+
     deleteRecordAJAXUrl: `${globalRootUrl}module-phone-book/delete`,
+
     saveRecordAJAXUrl: `${globalRootUrl}module-phone-book/save`,
 
     /**
-     * Initialize the module
+     * Initialize the module.
+     * This includes setting up event listeners and initializing the DataTable.
      */
     initialize() {
         this.initializeSearch();
@@ -42,7 +96,8 @@ const ModulePhoneBookDT = {
     },
 
     /**
-     * Initialize the search functionality
+     * Initialize the search functionality.
+     * It listens for key events and applies a filter based on the user's input.
      */
     initializeSearch() {
         this.$globalSearch.on('keyup', (e) => {
@@ -54,44 +109,65 @@ const ModulePhoneBookDT = {
     },
 
     /**
-     * Initialize all event listeners
+     * Initialize all event listeners.
+     * Handles input focus, form submission, adding new rows, and delete actions.
      */
     initializeEventListeners() {
-        const $body = $('body');
 
-        // Double-click on input field for editing
-        $body.on('focusin', '.caller-id-input, .number-input', (e) => {
+        // Handle focus on input fields for editing
+        this.$body.on('focusin', '.caller-id-input, .number-input', (e) => {
             this.onFieldFocus($(e.target));
         });
 
-        // Input field loses focus - send changes
-        $body.on('focusout', '.caller-id-input, .number-input', () => {
+        // Handle loss of focus on input fields and save changes
+        this.$body.on('focusout', '.caller-id-input, .number-input', () => {
             this.saveChangesForAllRows();
         });
 
-        // Delete button click event
-        $body.on('click', 'a.delete', (e) => {
+        // Handle delete button click
+        this.$body.on('click', 'a.delete', (e) => {
             e.preventDefault();
             const id = $(e.target).closest('a').data('value');
             this.deleteRow($(e.target), id);
         });
 
-        // Handle Enter or Tab key for form submission
+        // Handle Enter or Tab key to trigger form submission
         $(document).on('keydown', (e) => {
             if (e.key === 'Enter' || (e.key === 'Tab' && !$(':focus').hasClass('.number-input'))) {
                 this.saveChangesForAllRows();
             }
         });
 
-        // Add new row button click
+        // Handle adding a new row
         this.$addNewButton.on('click', (e) => {
             e.preventDefault();
             this.addNewRow();
         });
+
+        // Handle page length selection
+        this.$pageLengthSelector.dropdown({
+            onChange(pageLength) {
+                if (pageLength==='auto'){
+                    pageLength = this.calculatePageLength();
+                    localStorage.removeItem('phonebookTablePageLength');
+                } else {
+                    localStorage.setItem('phonebookTablePageLength', pageLength);
+                }
+                ModulePhoneBookDT.dataTable.page.len(pageLength).draw();
+            },
+        });
+
+        // Prevent event bubbling on dropdown click
+        this.$pageLengthSelector.on('click', function(event) {
+            event.stopPropagation(); // Prevent the event from bubbling
+        });
     },
 
+
     /**
-     * Handle focus on an input field
+     * Handle focus event on a field by adding a glowing effect and enabling editing.
+     *
+     * @param {jQuery} $input - The input field that received focus.
      */
     onFieldFocus($input) {
         $input.transition('glow');
@@ -100,7 +176,8 @@ const ModulePhoneBookDT = {
     },
 
     /**
-     * Save changes for all rows
+     * Save changes for all modified rows.
+     * It sends the changes for each modified row to the server.
      */
     saveChangesForAllRows() {
         const $rows = $('.changed-field').closest('tr');
@@ -113,7 +190,8 @@ const ModulePhoneBookDT = {
     },
 
     /**
-     * Add a new row to the phonebook table
+     * Add a new row to the phonebook table.
+     * The row is editable and allows for input of new contact information.
      */
     addNewRow() {
         const $emptyRow = $('.dataTables_empty');
@@ -127,8 +205,8 @@ const ModulePhoneBookDT = {
                 <td><i class="ui user circle icon"></i></td>
                 <td><div class="ui fluid input inline-edit changed-field"><input class="caller-id-input" type="text" value=""></div></td>
                 <td><div class="ui fluid input inline-edit changed-field"><input class="number-input" type="text" value=""></div></td>
-                <td><div class="ui small basic icon buttons action-buttons">
-                    <a href="#" class="ui button delete two-steps-delete popuped" data-value="new">
+                <td><div class="ui basic icon buttons action-buttons tiny">
+                    <a href="#" class="ui button delete" data-value="new">
                         <i class="icon trash red"></i>
                     </a>
                 </div></td>
@@ -142,9 +220,14 @@ const ModulePhoneBookDT = {
     },
 
     /**
-     * Initialize the DataTable
+     * Initialize the DataTable instance with the required settings and options.
      */
     initializeDataTable() {
+
+        // Get the user's saved value or use the automatically calculated value if none exists
+        const savedPageLength = localStorage.getItem('phonebookTablePageLength');
+        const pageLength = savedPageLength ? savedPageLength : this.calculatePageLength();
+
         this.$recordsTable.dataTable({
             search: { search: this.$globalSearch.val() },
             serverSide: true,
@@ -161,7 +244,7 @@ const ModulePhoneBookDT = {
                 { data: null },
             ],
             paging: true,
-            pageLength: 17,
+            pageLength: pageLength,
             deferRender: true,
             sDom: 'rtip',
             ordering: false,
@@ -176,13 +259,55 @@ const ModulePhoneBookDT = {
 
         this.dataTable = this.$recordsTable.DataTable();
 
+
+        // Set the select input value to the saved value if it exists
+        if (savedPageLength) {
+            this.$pageLengthSelector.dropdown('set value', savedPageLength);
+        }
+
+
+        // Initialize debounce timer variable
+        let searchDebounceTimer = null;
+
+        this.$globalSearch.on('keyup', (e) => {
+            // Clear previous timer if the user is still typing
+            clearTimeout(searchDebounceTimer);
+
+            // Set a new timer for delayed execution
+            searchDebounceTimer = setTimeout(() => {
+                const text = this.$globalSearch.val();
+                // Trigger the search if input is valid (Enter, Backspace, or more than 2 characters)
+                if (e.keyCode === 13 || e.keyCode === 8 || text.length >= 2) {
+                    this.applyFilter(text);
+                }
+            }, 500); // 500ms delay before executing the search
+        });
+
+        // Restore the saved search phrase from DataTables state
+        const state = this.dataTable.state.loaded();
+        if (state && state.search) {
+            this.$globalSearch.val(state.search.search); // Set the search field with the saved value
+        }
+
+        // Retrieves the value of 'search' query parameter from the URL.
+        const searchValue = this.getQueryParam('search');
+
+        // Sets the global search input value and applies the filter if a search value is provided.
+        if (searchValue) {
+            this.$globalSearch.val(searchValue);
+            this.applyFilter(searchValue);
+        }
+
         this.dataTable.on('draw', () => {
             this.$globalSearch.closest('div').removeClass('loading');
         });
     },
 
     /**
-     * Build the HTML structure for each row
+     * Build the HTML template for each row in the DataTable.
+     *
+     * @param {HTMLElement} row - The row element.
+     * @param {Object} data - The data object for the row.
      */
     buildRowTemplate(row, data) {
         const nameTemplate = `
@@ -194,8 +319,8 @@ const ModulePhoneBookDT = {
                 <input class="number-input" type="text" value="${data.number}" />
             </div>`;
         const deleteButtonTemplate = `
-            <div class="ui small basic icon buttons action-buttons">
-                <a href="${this.deleteRecordAJAXUrl}/${data.DT_RowId}" class="ui button delete two-steps-delete popuped">
+            <div class="ui basic icon buttons action-buttons tiny">
+                <a href="#" data-value="${data.DT_RowId}" class="ui delete button">
                     <i class="icon trash red"></i>
                 </a>
             </div>`;
@@ -207,8 +332,9 @@ const ModulePhoneBookDT = {
     },
 
     /**
-     * Apply a filter to the DataTable
-     * @param {string} text
+     * Apply a search filter to the DataTable.
+     *
+     * @param {string} text - The search text to apply.
      */
     applyFilter(text) {
         const $changedFields = $('.changed-field');
@@ -223,7 +349,9 @@ const ModulePhoneBookDT = {
     },
 
     /**
-     * Initialize input masks for phone numbers
+     * Initialize input masks for phone number fields.
+     *
+     * @param {jQuery} $el - The input elements to apply masks to.
      */
     initializeInputmask($el) {
         if (this.$disableInputMaskToggle.checkbox('is checked')) return;
@@ -248,8 +376,9 @@ const ModulePhoneBookDT = {
     },
 
     /**
-     * Send the changes for a specific row to the server
-     * @param {string} recordId
+     * Send the changes for a specific row to the server.
+     *
+     * @param {string} recordId - The ID of the record to save.
      */
     sendChangesToServer(recordId) {
         const callerId = $(`tr#${recordId} .caller-id-input`).val();
@@ -272,6 +401,7 @@ const ModulePhoneBookDT = {
         $.api({
             url: this.saveRecordAJAXUrl,
             method: 'POST',
+            on: 'now',
             data,
             successTest: (response) => response && response.success === true,
             onSuccess: (response) => this.onSaveSuccess(response, recordId),
@@ -283,7 +413,9 @@ const ModulePhoneBookDT = {
     },
 
     /**
-     * Display saving icon for a specific row
+     * Display a saving icon for the given record.
+     *
+     * @param {string} recordId - The ID of the record being saved.
      */
     displaySavingIcon(recordId) {
         $(`tr#${recordId} .user.circle`)
@@ -292,7 +424,10 @@ const ModulePhoneBookDT = {
     },
 
     /**
-     * Handle success of saving a record
+     * Handle successful saving of a record.
+     *
+     * @param {Object} response - The server response.
+     * @param {string} recordId - The ID of the record that was saved.
      */
     onSaveSuccess(response, recordId) {
         if (response.data) {
@@ -307,9 +442,10 @@ const ModulePhoneBookDT = {
     },
 
     /**
-     * Delete a row from the phonebook
-     * @param {jQuery} $target
-     * @param {string} id
+     * Delete a row from the phonebook table.
+     *
+     * @param {jQuery} $target - The delete button element.
+     * @param {string} id - The ID of the record to delete.
      */
     deleteRow($target, id) {
         if (id === 'new') {
@@ -332,11 +468,41 @@ const ModulePhoneBookDT = {
     },
 
     /**
-     * Clean number before pasting
-     * @returns {string}
+     * Clean number before pasting.
+     *
+     * @param {string} pastedValue - The pasted phone number.
+     * @returns {string} The cleaned number.
      */
     cbOnNumberBeforePaste(pastedValue) {
         return pastedValue.replace(/\D+/g, '');
+    },
+
+    /**
+     * Calculate the number of rows that can fit on a page based on window height.
+     *
+     * @returns {number} The calculated number of rows.
+     */
+    calculatePageLength() {
+        // Calculate row height
+        let rowHeight = this.$recordsTable.find('tr').first().outerHeight();
+
+        // Calculate window height and available space for table
+        const windowHeight = window.innerHeight;
+        const headerFooterHeight = 550; // Estimate height for header, footer, and other elements
+
+        // Calculate new page length
+        return Math.max(Math.floor((windowHeight - headerFooterHeight) / rowHeight), 5);
+    },
+
+    /**
+     * Get the value of a query parameter from the URL.
+     *
+     * @param {string} param - The name of the query parameter to retrieve.
+     * @returns {string|null} The value of the query parameter, or null if not found.
+     */
+    getQueryParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
     },
 };
 

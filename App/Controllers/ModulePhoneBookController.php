@@ -30,6 +30,8 @@ class ModulePhoneBookController extends BaseController
 {
     private $moduleUniqueID = 'ModulePhoneBook';
 
+    public bool $showModuleStatusToggle = false;
+
     /**
      * Controller for the index page.
      */
@@ -46,11 +48,15 @@ class ModulePhoneBookController extends BaseController
 
         // Add Semantic UI modal CSS
         $semanticCollectionCSS = $this->assets->collection(AssetProvider::SEMANTIC_UI_CSS);
-        $semanticCollectionCSS->addCss('css/vendor/semantic/modal.min.css', true);
+        $semanticCollectionCSS
+            ->addCss('css/vendor/semantic/progress.min.css', true)
+            ->addCss('css/vendor/semantic/modal.min.css', true);
 
         // Add Semantic UI modal JS
         $semanticCollectionJS = $this->assets->collection(AssetProvider::SEMANTIC_UI_JS);
-        $semanticCollectionJS->addJs('js/vendor/semantic/modal.min.js', true);
+        $semanticCollectionJS
+            ->addJs('js/vendor/semantic/progress.min.js', true)
+            ->addJs('js/vendor/semantic/modal.min.js', true);
 
         // Add JS files required for this page
         $footerCollection = $this->assets->collection(AssetProvider::FOOTER_JS);
@@ -61,6 +67,7 @@ class ModulePhoneBookController extends BaseController
             ->addJs('js/vendor/inputmask/bindings/inputmask.binding.js', true)
             ->addJs('js/vendor/datatable/dataTables.semanticui.js', true)
             ->addJs('js/pbx/Extensions/input-mask-patterns.js', true)
+            ->addJs('js/vendor/resumable.js', true)
             ->addJs("js/cache/{$this->moduleUniqueID}/module-phonebook-status.js", true)
             ->addJs("js/cache/{$this->moduleUniqueID}/module-phonebook-index.js", true)
             ->addJs("js/cache/{$this->moduleUniqueID}/module-phonebook-settings.js", true)
@@ -149,7 +156,7 @@ class ModulePhoneBookController extends BaseController
 
         $dataId = $this->request->getPost('id', ['string', 'trim']);
         $callId = $this->request->getPost('call_id', ['string', 'trim']);
-        $number = $this->request->getPost('number', ['alphanum']);
+        $number = $this->request->getPost('number', ['alnum']);
         $numberRep = $this->request->getPost('number_rep', ['string', 'trim'], $number);
 
         if (empty($callId) || empty($number)) {
@@ -233,11 +240,12 @@ class ModulePhoneBookController extends BaseController
         foreach ($records as $record) {
             if (!$record->delete()) {
                 $this->flash->error(implode('<br>', $record->getMessages()));
-                $this->view->success = false;
+                $this->view->result = false;
                 return;
             }
         }
-        $this->view->success = true;
+        $this->view->result = true;
+        $this->view->reload = 'module-phone-book/module-phone-book/index';
     }
 
     /**
@@ -254,7 +262,7 @@ class ModulePhoneBookController extends BaseController
             $settings = new Settings();
         }
 
-        $settings->disableInputMask = $this->request->getPost('disableInputMask') ? '1' : '0';
+        $settings->disableInputMask = $this->request->getPost('disableInputMask') === 'true' ? '1' : '0';
         if (!$settings->save()) {
             $this->flash->error(implode('<br>', $settings->getMessages()));
             $this->view->success = false;

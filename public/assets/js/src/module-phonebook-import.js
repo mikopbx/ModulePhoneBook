@@ -31,14 +31,35 @@ const ModulePhoneBookImport = {
     $importButton: $('#import-from-excel-button'),
 
     /**
+     * jQuery object for the progress bar label.
+     * @type {jQuery}
+     */
+    $progressBarLabel: $('#upload-progress-bar-label'),
+
+    /**
      * jQuery object for the file input field.
      * @type {jQuery}
      */
     $fileInput: $('#file'),
     
-    importFromExcelAJAXUrl: `${Config.pbxUrl}/pbxcore/api/modules/module-phone-book/import-from-excel`,
+    importFromExcelAJAXUrl: `${Config.pbxUrl}/pbxcore/api/modules/ModulePhoneBook/import-from-excel`,
 
     initialize() {
+
+        // Trigger file input click when clicking on text input or button
+        $('input:text, .select-file-for-upload', '.ui.action.input').on('click', (e) => {
+            $('input:file', $(e.target).parents()).click();
+        });
+
+        // Update text input value when selecting a file
+        $('input:file', '.ui.action.input').on('change', (e) => {
+            if (e.target.files[0] !== undefined) {
+                const filename = e.target.files[0].name;
+                $('input:text', $(e.target).parent()).val(filename);
+                ModulePhoneBookImport.$importButton.removeClass('disabled');
+            }
+        });
+
         // Инициализируем нажатие на кнопку
         ModulePhoneBookImport.$importButton.on('click', ModulePhoneBookImport.uploadExcelFile);
     },
@@ -47,7 +68,7 @@ const ModulePhoneBookImport = {
      * Функция импорта файла через POST-запрос с использованием Semantic UI API и FormData
      */
     uploadExcelFile() {
-        const file = ModulePhoneBookImport.$fileInput[0].files[0];
+        const file = $('input:file')[0].files[0];
 
         // Проверяем, выбран ли файл
         if (!file) {
@@ -105,20 +126,24 @@ const ModulePhoneBookImport = {
         mergingCheckWorker.initialize(fileID, filePath);
     },
     importExcelFile(uploadedFilePath){
+        ModulePhoneBookImport.$progressBarLabel.text(globalTranslate.module_phnbk_RecognitionOnProgress);
         $.api({
             url: ModulePhoneBookImport.importFromExcelAJAXUrl,
             method: 'POST',
+            on: 'now',
             data: {uploadedFilePath:uploadedFilePath},
-            beforeSend(xhr) {
+            beforeXHR(xhr) {
                 xhr.setRequestHeader('X-Processor-Timeout', '600');
             },
+            successTest: PbxApi.successTest,
             onSuccess(response) {
+                ModulePhoneBookImport.$progressBarLabel.text(globalTranslate.module_phnbk_RecognitionFinished);
                 ModulePhoneBookImport.$importButton.removeClass('loading');
                 window.location.reload(); // Обновляем страницу после успешного импорта
             },
             onFailure(response) {
                 ModulePhoneBookImport.$importButton.removeClass('loading');
-                UserMessage.showMultiString(response.message || globalTranslate.module_phnbk_GeneraLFileUploadError);
+                UserMessage.showMultiString(response.messages || globalTranslate.module_phnbk_GeneraLFileUploadError);
             }
         });
     }

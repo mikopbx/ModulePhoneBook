@@ -18,8 +18,8 @@
 
 const ModulePhoneBookStatus = {
     $moduleStatus: $('#status'),
-    $statusToggle: $('#module-status'),
-    $disabilityFields: $('#module-phonebook-form .disability'),
+    $statusToggle: $('#module-status-toggle'),
+    $formObj: $('#module-phonebook-form'),
 
     /**
      * Initializes the module's status checks.
@@ -36,10 +36,10 @@ const ModulePhoneBookStatus = {
      */
     checkStatusToggle() {
         if (ModulePhoneBookStatus.$statusToggle.checkbox('is checked')) {
-            ModulePhoneBookStatus.$disabilityFields.removeClass('disabled');
+            ModulePhoneBookStatus.$formObj.show();
             ModulePhoneBookStatus.$moduleStatus.show();
         } else {
-            ModulePhoneBookStatus.$disabilityFields.addClass('disabled');
+            ModulePhoneBookStatus.$formObj.hide();
             ModulePhoneBookStatus.$moduleStatus.hide();
         }
     },

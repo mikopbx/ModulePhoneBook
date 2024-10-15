@@ -29,14 +29,14 @@ class ModuleConfigForm extends BaseForm
     public function initialize($entity = null, $options = null): void
     {
         // DisableInputMask
-        $checkbox = new Check('disableInputMask', [
-            'checked'   => '1',
-            'value'     => $entity->disableInputMask??'0',
-        ]);
-        $this->add($checkbox);
+        $checkAr = ['value' => null];
+        if (intval($entity->disableInputMask) === 1) {
+            $checkAr = ['checked' => '1','value' => '1'];
+        }
+        $this->add(new Check('disableInputMask', $checkAr));
 
         // Excel file
-        $excelFile= new File('excelFile');
+        $excelFile = new File('excelFile');
         $this->add($excelFile);
     }
 }

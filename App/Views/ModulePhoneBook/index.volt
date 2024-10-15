@@ -1,4 +1,4 @@
-<form method="post" action="#" role="form" class="ui large form" id="module-phonebook-form">
+<form method="post" action="#" role="form" class="ui form" id="module-phonebook-form">
 
     <div class="ui top attached tabular menu" id="module-phonebook-menu">
         <a class="item active" data-tab="phonebook">{{ t._('module_phnbk_PhonebookTab') }}</a>

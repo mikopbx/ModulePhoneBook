@@ -26,8 +26,8 @@ use Modules\ModulePhoneBook\Models\PhoneBook;
 use Phalcon\Di\Injectable;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Reader\Exception as ReaderException;
-use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 
+include_once __DIR__ . '/../vendor/autoload.php';
 /**
  * Class PhoneBookImport
  *
@@ -56,7 +56,7 @@ class PhoneBookImport extends Injectable
             $result->messages['error'][] = $this->translation->_('module_phnbk_invalidFormat');
             return $result;
         }
-
+        $result->success = true;
         // Load and process the file
         try {
             $spreadsheet = IOFactory::load($uploadedFilePath);
@@ -71,16 +71,15 @@ class PhoneBookImport extends Injectable
 
                 $res = $this->savePhonebookRecord($callId, $numberRep, $number);
                 if (!$res->success) {
-                    return $res;
+                    $result->success = false;
+                    $result->messages['error'] = array_merge($result->messages['error']??[], $res->messages['error']??[]);
                 }
             }
-
         } catch (\Throwable $e) {
             $result->messages['error'][] = CriticalErrorsHandler::handleExceptionWithSyslog($e);
+            $result->success = false;
             return $result;
         }
-
-        $result->success = true;
         return $result;
     }
 
@@ -122,7 +121,10 @@ class PhoneBookImport extends Injectable
         $record->call_id = $callId;
         $record->number_rep = $numberRep;
         $record->number = $number;
-
+        // Collect data for the search index
+        $username = mb_strtolower($callId);
+        // Combine all fields into a single string
+        $record->search_index = $username . $number . $numberRep;
         if (!$record->save()) {
             $errors = implode('<br>', $record->getMessages());
             $message = $this->translation->_("module_phnbk_ImportError");
