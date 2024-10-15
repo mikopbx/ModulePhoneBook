@@ -42,4 +42,7 @@ return [
     'module_phnbk_DeleteAllDescription' => 'Alle telefoonboekgegevens worden permanent verwijderd. Als u één of meer gegevens wilt verwijderen, gebruikt u de knop in de tabel.',
     'module_phnbk_UploadError' => 'Fout bij het downloaden van bestanden',
     'module_phnbk_UploadInProgress' => 'Een bestand uploaden naar de server',
+    'module_phnbk_AllRecordsDeleted' => 'Alle vermeldingen zijn verwijderd',
+    'module_phnbk_RecognitionOnProgress' => 'Gegevens uit een bestand parseren en laden',
+    'module_phnbk_RecognitionFinished' => 'Het laden van gegevens is voltooid',
 ];
