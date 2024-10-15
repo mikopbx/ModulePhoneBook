@@ -42,4 +42,7 @@ return [
     'module_phnbk_GeneraLFileUploadError' => 'Fayl yüklənərkən xəta baş verdi',
     'module_phnbk_UploadError' => 'Fayl yükləmə xətası',
     'module_phnbk_UploadInProgress' => 'Faylın serverə yüklənməsi',
+    'module_phnbk_AllRecordsDeleted' => 'Bütün qeydlər silindi',
+    'module_phnbk_RecognitionOnProgress' => 'Fayldan məlumatların təhlili və yüklənməsi',
+    'module_phnbk_RecognitionFinished' => 'Datanın yüklənməsi tamamlandı',
 ];
