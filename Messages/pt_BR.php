@@ -42,4 +42,7 @@ return [
     'module_phnbk_Approve' => 'Excluir tudo',
     'module_phnbk_GeneraLFileUploadError' => 'Erro ao carregar o arquivo',
     'module_phnbk_UploadInProgress' => 'Fazendo upload de um arquivo para o servidor',
+    'module_phnbk_AllRecordsDeleted' => 'Todas as entradas foram excluídas',
+    'module_phnbk_RecognitionOnProgress' => 'Analisando e carregando dados de um arquivo',
+    'module_phnbk_RecognitionFinished' => 'Carregamento de dados concluído',
 ];
