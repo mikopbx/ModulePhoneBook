@@ -42,4 +42,7 @@ return [
     'module_phnbk_GeneraLFileUploadError' => 'Dosya yüklenirken hata oluştu',
     'module_phnbk_UploadError' => 'Dosya indirme hatası',
     'module_phnbk_UploadInProgress' => 'Sunucuya dosya yükleme',
+    'module_phnbk_AllRecordsDeleted' => 'Tüm girişler silindi',
+    'module_phnbk_RecognitionOnProgress' => 'Bir dosyadaki verileri ayrıştırma ve yükleme',
+    'module_phnbk_RecognitionFinished' => 'Veri yükleme tamamlandı',
 ];
