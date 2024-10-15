@@ -42,4 +42,7 @@ return [
     'module_phnbk_Approve' => 'ลบทุกอย่าง',
     'module_phnbk_GeneraLFileUploadError' => 'เกิดข้อผิดพลาดในการอัปโหลดไฟล์',
     'module_phnbk_UploadError' => 'เกิดข้อผิดพลาดในการดาวน์โหลดไฟล์',
+    'module_phnbk_AllRecordsDeleted' => 'รายการทั้งหมดถูกลบแล้ว',
+    'module_phnbk_RecognitionOnProgress' => 'การแยกวิเคราะห์และการโหลดข้อมูลจากไฟล์',
+    'module_phnbk_RecognitionFinished' => 'การโหลดข้อมูลเสร็จสมบูรณ์',
 ];
