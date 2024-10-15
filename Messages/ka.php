@@ -42,4 +42,7 @@ return [
     'module_phnbk_CancelBtn' => 'გაუქმება',
     'module_phnbk_Approve' => 'წაშალე ყველაფერი',
     'module_phnbk_UploadInProgress' => 'ფაილის ატვირთვა სერვერზე',
+    'module_phnbk_AllRecordsDeleted' => 'ყველა ჩანაწერი წაშლილია',
+    'module_phnbk_RecognitionOnProgress' => 'ფაილიდან მონაცემების გარჩევა და ჩატვირთვა',
+    'module_phnbk_RecognitionFinished' => 'მონაცემთა ჩატვირთვა დასრულდა',
 ];
