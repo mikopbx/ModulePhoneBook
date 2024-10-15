@@ -42,4 +42,7 @@ return [
     'module_phnbk_GeneraLFileUploadError' => 'Помилка під час завантаження файлу',
     'module_phnbk_UploadError' => 'Помилка завантаження файлу',
     'module_phnbk_UploadInProgress' => 'Завантаження файлу на сервер',
+    'module_phnbk_AllRecordsDeleted' => 'Усі записи видалені',
+    'module_phnbk_RecognitionOnProgress' => 'Розбір та завантаження даних із файлу',
+    'module_phnbk_RecognitionFinished' => 'Завантаження даних виконано',
 ];
