@@ -42,4 +42,7 @@ return [
     'module_phnbk_UploadError' => 'Chyba stahování souboru',
     'module_phnbk_DeleteAllDescription' => 'Všechny položky telefonního seznamu budou trvale smazány, pokud potřebujete odstranit jednu nebo položku, použijte tlačítko v tabulce.',
     'module_phnbk_UploadInProgress' => 'Nahrání souboru na server',
+    'module_phnbk_AllRecordsDeleted' => 'Všechny záznamy byly smazány',
+    'module_phnbk_RecognitionOnProgress' => 'Analýza a načítání dat ze souboru',
+    'module_phnbk_RecognitionFinished' => 'Načítání dat dokončeno',
 ];
