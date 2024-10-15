@@ -42,4 +42,7 @@ return [
     'module_phnbk_invalidFormat' => '文件格式错误',
     'module_phnbk_DeleteAllDescription' => '所有电话簿条目都将被永久删除；如果您需要删除一个或一个条目，请使用表中的按钮。',
     'module_phnbk_CancelBtn' => '取消',
+    'module_phnbk_AllRecordsDeleted' => '所有条目已被删除',
+    'module_phnbk_RecognitionOnProgress' => '从文件中解析并加载数据',
+    'module_phnbk_RecognitionFinished' => '数据加载完成',
 ];
