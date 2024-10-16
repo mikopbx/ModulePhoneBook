@@ -29,14 +29,28 @@ class ModuleConfigForm extends BaseForm
     public function initialize($entity = null, $options = null): void
     {
         // DisableInputMask
-        $checkAr = ['value' => null];
-        if (intval($entity->disableInputMask) === 1) {
-            $checkAr = ['checked' => '1','value' => '1'];
-        }
-        $this->add(new Check('disableInputMask', $checkAr));
+        $this->addCheckBox('disableInputMask', intval($entity->disableInputMask) === 1);
 
         // Excel file
         $excelFile = new File('excelFile');
         $this->add($excelFile);
+    }
+
+    /**
+     * Adds a checkbox to the form field with the given name.
+     * Can be deleted if the module depends on MikoPBX later than 2024.3.0
+     *
+     * @param string $fieldName The name of the form field.
+     * @param bool $checked Indicates whether the checkbox is checked by default.
+     * @param string $checkedValue The value assigned to the checkbox when it is checked.
+     * @return void
+     */
+    public function addCheckBox(string $fieldName, bool $checked, string $checkedValue = 'on'): void
+    {
+        $checkAr = ['value' => null];
+        if ($checked) {
+            $checkAr = ['checked' => $checkedValue,'value' => $checkedValue];
+        }
+        $this->add(new Check($fieldName, $checkAr));
     }
 }
