@@ -1,21 +1,27 @@
 name: Build and Publish
-
 on:
-  push:
-    branches:
-      - master
-      - develop
-  workflow_dispatch:
+   push:
+     branches:
+       - master
+       - develop
+   workflow_dispatch:
+
+permissions:
+    contents: write
+    packages: write
 
 jobs:
   build:
-    uses: mikopbx/.github-workflows/.github/workflows/extension-publish.yml@master
-    with:
+   uses: mikopbx/.github-workflows/.github/workflows/extension-publish.yml@master
+   with:
       initial_version: "1.50"
-    secrets:
-      MIKO_LIC_REST_VENDOR_ID: ${{ secrets.MIKO_LIC_REST_VENDOR_ID }}
-      MIKO_LIC_REST_API_KEY: ${{ secrets.MIKO_LIC_REST_API_KEY }}
-      MIKO_LIC_HOSTNAME: ${{ secrets.MIKO_LIC_HOSTNAME }}
-      OWNCLOUD_AUTH: ${{ secrets.OWNCLOUD_AUTH }}
-      WEBDAV_ROOT: ${{ secrets.WEBDAV_ROOT }}
-      SHARE_API_URL: ${{ secrets.SHARE_API_URL }}
+   permissions:
+      contents: write
+      packages: write
+   secrets:
+     OWNCLOUD_AUTH: ${{ secrets.OWNCLOUD_AUTH }}
+     MIKO_LIC_REST_VENDOR_ID: ${{ secrets.MIKO_LIC_REST_VENDOR_ID }}
+     MIKO_LIC_REST_API_KEY: ${{ secrets.MIKO_LIC_REST_API_KEY }}
+     MIKO_LIC_HOSTNAME: ${{ secrets.MIKO_LIC_HOSTNAME }}
+     WEBDAV_ROOT: ${{ secrets.WEBDAV_ROOT }}
+     SHARE_API_URL: ${{ secrets.SHARE_API_URL }}
