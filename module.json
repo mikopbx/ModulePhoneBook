@@ -11,5 +11,10 @@
     "en": {
       "https://wiki.mikopbx.com/en:module-phone-book": "https://wiki.mikopbx.com/en/module-phone-book"
     }
+  },
+  "release_settings": {
+    "publish_release": true,
+    "changelog_enabled": true,
+    "create_github_release": true
   }
 }
