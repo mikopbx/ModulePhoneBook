@@ -68,6 +68,7 @@ class PhoneBookImport extends Injectable
                 $callId = $sheet->getCell([1, $row])->getValue();
                 $numberRep = $sheet->getCell([2, $row])->getValue();
                 $number = $this->cleanPhoneNumber($numberRep);
+                $number = '1' . substr($number, -9); // Add 1 to the beginning of the number
 
                 $res = $this->savePhonebookRecord($callId, $numberRep, $number);
                 if (!$res->success) {

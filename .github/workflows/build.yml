@@ -18,10 +18,4 @@ jobs:
    permissions:
       contents: write
       packages: write
-   secrets:
-     OWNCLOUD_AUTH: ${{ secrets.OWNCLOUD_AUTH }}
-     MIKO_LIC_REST_VENDOR_ID: ${{ secrets.MIKO_LIC_REST_VENDOR_ID }}
-     MIKO_LIC_REST_API_KEY: ${{ secrets.MIKO_LIC_REST_API_KEY }}
-     MIKO_LIC_HOSTNAME: ${{ secrets.MIKO_LIC_HOSTNAME }}
-     WEBDAV_ROOT: ${{ secrets.WEBDAV_ROOT }}
-     SHARE_API_URL: ${{ secrets.SHARE_API_URL }}
+   secrets: inherit
