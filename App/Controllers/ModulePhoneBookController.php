@@ -123,6 +123,7 @@ class ModulePhoneBookController extends BaseController
         $parameters['columns'] = [
             'call_id',
             'number' => 'number_rep',
+            'expired' => 'expired',
             'DT_RowId' => 'id',
         ];
         $parameters['order'] = ['call_id desc'];
