@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License along with this program.
  * If not, see <https://www.gnu.org/licenses/>.
  */
+
 namespace Modules\ModulePhoneBook\Models;
 
 use MikoPBX\Modules\Models\ModulesModelsBase;
@@ -30,7 +31,8 @@ use Modules\ModulePhoneBook\Lib\MikoPBXVersion;
  * @method static mixed findFirstByNumber(array|string|int $parameters = null)
  * @Indexes(
  *     [name='number', columns=['number'], type=''],
- *     [name='CallerID', columns=['CallerID'], type='']
+ *     [name='CallerID', columns=['CallerID'], type=''],
+ *     [name='Expired', columns=['expired'], type='']
  * )
  */
 class PhoneBook extends ModulesModelsBase
@@ -70,6 +72,13 @@ class PhoneBook extends ModulesModelsBase
      * @Column(type="string", nullable=true, default="")
      */
     public ?string $search_index = "";
+
+    /**
+     * Expired - Current time or 0
+     *
+     * @Column(type="integer", nullable=false, default=0)
+     */
+    public int $expired = 0;
 
     /**
      * Initializes the model by setting the source table,
