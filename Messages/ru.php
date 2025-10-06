@@ -52,10 +52,15 @@ return [
     'module_phnbk_CancelBtn' => 'Отмена',
     'module_phnbk_Approve' => 'Удалить все',
     'module_phnbk_GeneraLFileUploadError' => 'Ошибка при загрузке файла',
-    'module_phnbk_UploadError'=>'Ошибка загрузки файла',
-    'module_phnbk_UploadInProgress'=>'Загрузки файла на сервер',
-    'module_phnbk_AllRecordsDeleted'=>'Все записи удалены',
-    'module_phnbk_RecognitionOnProgress'=>'Разбор и загрузка данных из файла',
-    'module_phnbk_RecognitionFinished'=>'Загрузка данных выполнена',
-    'module_phnbk_UrlNotValid' => 'Недопустимый URL-адрес'
+    'module_phnbk_UploadError' => 'Ошибка загрузки файла',
+    'module_phnbk_UploadInProgress' => 'Загрузки файла на сервер',
+    'module_phnbk_AllRecordsDeleted' => 'Все записи удалены',
+    'module_phnbk_RecognitionOnProgress' => 'Разбор и загрузка данных из файла',
+    'module_phnbk_RecognitionFinished' => 'Загрузка данных выполнена',
+    'module_phnbk_UrlNotValid' => 'Недопустимый URL-адрес',
+    'module_phnbk_СacheLifetime' => 'Время жизни кеша',
+    'module_phnbk_СacheLifetimeDescription' => 'Количество секунд, в течение которых кэшированная запись будет действительна. 0 - навсегда.',
+    'module_phnbk_SaveBtn' => 'Сохранить',
+    'module_phnbk_ApiUrl' => 'URL-адрес для поиска CallerID',
+    'module_phnbk_ApiUrlDescription' => '%repesent% в строке будет заменен на номер телефона.'
 ];
