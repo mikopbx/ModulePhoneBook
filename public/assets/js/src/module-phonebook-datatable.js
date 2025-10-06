@@ -386,14 +386,14 @@ const ModulePhoneBookDT = {
 
         if (!callerId || !numberInputVal) return;
 
-        let number = numberInputVal.replace(/\D+/g, '');
-        number = `1${number.substr(number.length - 9)}`;
+        // let number = numberInputVal.replace(/\D+/g, '');
+        // number = `1${number.substr(number.length - 9)}`;
 
         const data = {
             call_id: callerId,
             number_rep: numberInputVal,
-            number,
-            id: recordId,
+            // number,
+            id: recordId
         };
 
         this.displaySavingIcon(recordId);
