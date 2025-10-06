@@ -129,13 +129,18 @@ $contact->number_rep = '+7(906)555-43-43'; // Display format
 $contact->call_id = 'John Doe';
 $contact->search_index = 'johndoe1065554343+7(906)555-43-43';
 $contact->save();
+
+// OR:
+$contact = new PhoneBook();
+$contact->setPhonebookRecord('John Doe', '+7(906)555-43-43');
+$contact->save();
 ```
 
 ### Excel Import Format
 
 The module accepts Excel files with the following structure:
 ```
-| Name/Company     | Phone Number      |
+| Name/Company    | Phone Number      |
 |-----------------|-------------------|
 | John Doe        | +1 (555) 123-4567 |
 | ACME Corp       | +1-777-888-9999   |
