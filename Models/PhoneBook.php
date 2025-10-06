@@ -32,7 +32,7 @@ use Modules\ModulePhoneBook\Lib\MikoPBXVersion;
  * @Indexes(
  *     [name='number', columns=['number'], type=''],
  *     [name='CallerID', columns=['CallerID'], type=''],
- *     [name='Expired', columns=['expired'], type='']
+ *     [name='Created', columns=['created'], type='']
  * )
  */
 class PhoneBook extends ModulesModelsBase
@@ -74,11 +74,11 @@ class PhoneBook extends ModulesModelsBase
     public ?string $search_index = "";
 
     /**
-     * Expired - Current time or 0
+     * Created - Created timestamp or 0
      *
      * @Column(type="integer", nullable=false, default=0)
      */
-    public int $expired = 0;
+    public int $created = 0;
 
     /**
      * Initializes the model by setting the source table,
