@@ -51,7 +51,7 @@ class PhoneBookAgi extends Injectable
             }
             $number_orig = $number;
             // Normalize the phone number to match the expected format (last 9 digits)
-            $number = '1' . substr($number, -9);
+            $number =  PhoneBook::cleanPhoneNumber($number, TRUE);
 
             // Find the corresponding phonebook entry by the number
             $result = PhoneBook::findFirstByNumber($number);
@@ -105,10 +105,13 @@ class PhoneBookAgi extends Injectable
 
                 if (!empty($return)) {
                     // Saving the number in the phonebook
-                    $importer = new PhoneBookImport();
-                    $number = '1' . substr($importer->cleanPhoneNumber($number), -9);
-                    $numberRep = empty($number_orig) ? substr($number, -9) : $importer->cleanPhoneNumber($number_orig);
-                    $importer->savePhonebookRecord(trim($return), $numberRep, $number, $_SERVER['REQUEST_TIME']);
+                    $numberRep = empty($number_orig) ? substr($number, -9) : $number_orig;
+                    $record = new PhoneBook();
+                    $record->setPhonebookRecord($return, $record->cleanPhoneNumber($numberRep), $_SERVER['REQUEST_TIME']);
+                    if (!$record->save()) {
+                        // Log the error message if an exception occurs
+                        Util::sysLogMsg('PhoneBookAGI', implode(' | ', $record->getMessages()), LOG_ERR);
+                    }
                 }
             }
         }

@@ -116,4 +116,38 @@ class PhoneBook extends ModulesModelsBase
 
         return $this->validate($validation);
     }
+
+
+    /**
+     *
+     * @param string $callId
+     * @param string $numberRep
+     * @param int $created
+     * @return void
+     */
+    public function setPhonebookRecord(string $callId, string $numberRep, int $created = 0): void
+    {
+        $this->call_id = $callId;
+        $this->number_rep = $numberRep;
+        $this->number = $this->cleanPhoneNumber($numberRep, TRUE);
+        $this->created = $created;
+
+        // Combine all fields into a single string
+        $this->search_index = mb_strtolower($callId) . $this->number . $this->number_rep;
+    }
+
+    /**
+     * Clean phone number by removing non-numeric characters
+     *
+     * @param string $numberRep The original phone number (including special characters)
+     * @param boolean $isNormalize Is Normalize number
+     * @return string The cleaned phone number (digits only)
+     */
+    public static function cleanPhoneNumber(string $numberRep, bool $isNormalize = FALSE): string
+    {
+        // Remove all non-numeric characters
+        $numberRep = preg_replace('/\D+/', '', $numberRep);
+        // Normalize number
+        return $isNormalize ? '1' . substr($numberRep, -9) : $numberRep;
+    }
 }
