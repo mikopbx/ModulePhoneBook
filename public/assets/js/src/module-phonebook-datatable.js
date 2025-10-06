@@ -386,13 +386,9 @@ const ModulePhoneBookDT = {
 
         if (!callerId || !numberInputVal) return;
 
-        // let number = numberInputVal.replace(/\D+/g, '');
-        // number = `1${number.substr(number.length - 9)}`;
-
         const data = {
             call_id: callerId,
             number_rep: numberInputVal,
-            // number,
             id: recordId
         };
 
@@ -433,6 +429,7 @@ const ModulePhoneBookDT = {
         if (response.data) {
             let oldId = response.data.oldId || recordId;
             $(`tr#${oldId} input`).attr('readonly', true);
+            $(`tr#${oldId} a.delete.button`).attr('data-value', response.data.newId);
             $(`tr#${oldId} div`).removeClass('changed-field loading').addClass('transparent');
             $(`tr#${oldId} .spinner.loading`).addClass('user circle').removeClass('spinner loading');
             if (oldId !== response.data.newId) {
