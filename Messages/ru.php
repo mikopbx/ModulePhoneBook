@@ -48,7 +48,7 @@ return [
     'module_phnbk_NoFileUploaded' => 'Не загружен файл для импорта',
     'module_phnbk_invalidFormat' => 'Ошибка формата файла',
     'module_phnbk_DeleteAllTitle' => 'Внимание!',
-    'module_phnbk_DeleteAllDescription' => 'Все записи телефонной книги будут безвозвратно удалены, если вам нужно удалить одну или запись, используйтесь кнопкой в таблице.',
+    'module_phnbk_DeleteAllDescription' => 'Все записи телефонной книги будут безвозвратно удалены, если вам нужно удалить одну или несколько записей, используйтесь кнопкой в таблице.',
     'module_phnbk_CancelBtn' => 'Отмена',
     'module_phnbk_Approve' => 'Удалить все',
     'module_phnbk_GeneraLFileUploadError' => 'Ошибка при загрузке файла',
