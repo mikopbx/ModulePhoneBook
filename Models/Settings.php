@@ -15,6 +15,7 @@
 namespace Modules\ModulePhoneBook\Models;
 
 use MikoPBX\Modules\Models\ModulesModelsBase;
+use Modules\ModulePhoneBook\Lib\MikoPBXVersion;
 
 class Settings extends ModulesModelsBase
 {
@@ -32,10 +33,50 @@ class Settings extends ModulesModelsBase
      */
     public $disableInputMask;
 
+    /**
+     * Url for CallerID search
+     *
+     * @Column(type="string", nullable=true)
+     */
+    public $phoneBookApiUrl;
+
+    /**
+     * Lifetime in seconds
+     *
+     * @Column(type="integer", default="0", nullable=false)
+     */
+    public $phoneBookLifeTime;
+
 
     public function initialize(): void
     {
         $this->setSource('m_ModulePhoneBook');
         parent::initialize();
+    }
+
+    /**
+     * Validates the instance by ensuring the uniqueness of the 'number' attribute.
+     *
+     * @return bool Returns true if validation passes, otherwise false.
+     */
+    public function validation(): bool
+    {
+        $validationClass = MikoPBXVersion::getValidationClass();
+        $callbackClass = MikoPBXVersion::getValidatorCallbackClass();
+        $validation = new $validationClass();
+
+        $validation->add(
+            'phoneBookApiUrl',
+            new $callbackClass(
+                [
+                    'callback' => function ($data) {
+                        return filter_var($data['phoneBookApiUrl'], FILTER_VALIDATE_URL) && stripos($data['phoneBookApiUrl'], '%number%') !== FALSE;
+                    },
+                    'message' => $this->t('module_phnbk_AlreadyExistWithThisNumber'),
+                ]
+            )
+        );
+
+        return $this->validate($validation);
     }
 }

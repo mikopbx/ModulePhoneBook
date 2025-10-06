@@ -99,4 +99,17 @@ class MikoPBXVersion
             return  \Phalcon\Logger::class;
         }
     }
+
+    /**
+     * Return validator Callback class for the current version of PBX
+     * @return class-string<\Phalcon\Filter\Validation\Validator\Callback>|class-string<\Phalcon\Validation\Validator\Callback>
+     */
+    public static function getValidatorCallbackClass(): string
+    {
+        if (self::isPhalcon5Version()) {
+            return  \Phalcon\Filter\Validation\Validator\Callback::class;
+        } else {
+            return  \Phalcon\Validation\Validator\Callback::class;
+        }
+    }
 }
