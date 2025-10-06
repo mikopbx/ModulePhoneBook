@@ -42,38 +42,46 @@ class ModulePhoneBookController extends BaseController
 
         // Add necessary CSS files
         $headerCollectionCSS = $this->assets->collection(AssetProvider::HEADER_CSS);
-        $headerCollectionCSS
-            ->addCss('css/vendor/datatable/dataTables.semanticui.min.css', true)
-            ->addCss("css/cache/{$this->moduleUniqueID}/module-phonebook.css", true);
+        $headerCollectionCSS->addCss('css/vendor/datatable/dataTables.semanticui.min.css', true)->addCss(
+                "css/cache/{$this->moduleUniqueID}/module-phonebook.css",
+                true
+            );
 
         // Add Semantic UI modal CSS
         $semanticCollectionCSS = $this->assets->collection(AssetProvider::SEMANTIC_UI_CSS);
-        $semanticCollectionCSS
-            ->addCss('css/vendor/semantic/progress.min.css', true)
-            ->addCss('css/vendor/semantic/modal.min.css', true);
+        $semanticCollectionCSS->addCss('css/vendor/semantic/progress.min.css', true)->addCss(
+                'css/vendor/semantic/modal.min.css',
+                true
+            );
 
         // Add Semantic UI modal JS
         $semanticCollectionJS = $this->assets->collection(AssetProvider::SEMANTIC_UI_JS);
-        $semanticCollectionJS
-            ->addJs('js/vendor/semantic/progress.min.js', true)
-            ->addJs('js/vendor/semantic/modal.min.js', true);
+        $semanticCollectionJS->addJs('js/vendor/semantic/progress.min.js', true)->addJs(
+                'js/vendor/semantic/modal.min.js',
+                true
+            );
 
         // Add JS files required for this page
         $footerCollection = $this->assets->collection(AssetProvider::FOOTER_JS);
-        $footerCollection
-            ->addJs('js/vendor/inputmask/inputmask.js', true)
-            ->addJs('js/vendor/inputmask/jquery.inputmask.js', true)
-            ->addJs('js/vendor/inputmask/jquery.inputmask-multi.js', true)
-            ->addJs('js/vendor/inputmask/bindings/inputmask.binding.js', true)
-            ->addJs('js/vendor/datatable/dataTables.semanticui.js', true)
-            ->addJs('js/pbx/Extensions/input-mask-patterns.js', true)
-            ->addJs('js/vendor/resumable.js', true)
-            ->addJs("js/cache/{$this->moduleUniqueID}/module-phonebook-status.js", true)
-            ->addJs("js/cache/{$this->moduleUniqueID}/module-phonebook-index.js", true)
-            ->addJs("js/cache/{$this->moduleUniqueID}/module-phonebook-settings.js", true)
-            ->addJs("js/cache/{$this->moduleUniqueID}/module-phonebook-merging-worker.js", true)
-            ->addJs("js/cache/{$this->moduleUniqueID}/module-phonebook-import.js", true)
-            ->addJs("js/cache/{$this->moduleUniqueID}/module-phonebook-datatable.js", true);
+        $footerCollection->addJs('js/vendor/inputmask/inputmask.js', true)->addJs(
+                'js/vendor/inputmask/jquery.inputmask.js',
+                true
+            )->addJs('js/vendor/inputmask/jquery.inputmask-multi.js', true)->addJs(
+                'js/vendor/inputmask/bindings/inputmask.binding.js',
+                true
+            )->addJs('js/vendor/datatable/dataTables.semanticui.js', true)->addJs(
+                'js/pbx/Extensions/input-mask-patterns.js',
+                true
+            )->addJs('js/vendor/resumable.js', true)->addJs(
+                "js/cache/{$this->moduleUniqueID}/module-phonebook-status.js",
+                true
+            )->addJs("js/cache/{$this->moduleUniqueID}/module-phonebook-index.js", true)->addJs(
+                "js/cache/{$this->moduleUniqueID}/module-phonebook-settings.js",
+                true
+            )->addJs("js/cache/{$this->moduleUniqueID}/module-phonebook-merging-worker.js", true)->addJs(
+                "js/cache/{$this->moduleUniqueID}/module-phonebook-import.js",
+                true
+            )->addJs("js/cache/{$this->moduleUniqueID}/module-phonebook-datatable.js", true);
 
         $settings = Settings::findFirst();
         if ($settings === null) {
@@ -250,9 +258,9 @@ class ModulePhoneBookController extends BaseController
     }
 
     /**
-     * Toggle input mask feature.
+     * Save settings
      */
-    public function toggleDisableInputMaskAction(): void
+    public function saveSettingsAction(): void
     {
         if (!$this->request->isPost()) {
             return;
@@ -263,10 +271,17 @@ class ModulePhoneBookController extends BaseController
             $settings = new Settings();
         }
 
-        $settings->disableInputMask = $this->request->getPost('disableInputMask') === 'true' ? '1' : '0';
+        if ($this->request->hasPost('disableInputMask')) {
+            $settings->disableInputMask = $this->request->getPost('disableInputMask') === 'true' ? '1' : '0';
+        } elseif ($this->request->hasPost('phoneBookApiUrl')) {
+            $settings->phoneBookApiUrl = empty($this->request->getPost('phoneBookApiUrl')) ? NULL : trim($this->request->getPost('phoneBookApiUrl'));
+            $settings->phoneBookLifeTime = empty($this->request->getPost('phoneBookLifeTime')) ? 0 : $this->request->getPost('phoneBookLifeTime');
+        }
+
         if (!$settings->save()) {
             $this->flash->error(implode('<br>', $settings->getMessages()));
             $this->view->success = false;
+            $this->response->setStatusCode(500);
             return;
         }
         $this->view->success = true;

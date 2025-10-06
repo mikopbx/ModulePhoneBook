@@ -56,5 +56,6 @@ return [
     'module_phnbk_UploadInProgress'=>'Загрузки файла на сервер',
     'module_phnbk_AllRecordsDeleted'=>'Все записи удалены',
     'module_phnbk_RecognitionOnProgress'=>'Разбор и загрузка данных из файла',
-    'module_phnbk_RecognitionFinished'=>'Загрузка данных выполнена'
+    'module_phnbk_RecognitionFinished'=>'Загрузка данных выполнена',
+    'module_phnbk_UrlNotValid' => 'Недопустимый URL-адрес'
 ];
