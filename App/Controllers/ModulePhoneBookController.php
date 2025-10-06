@@ -157,8 +157,8 @@ class ModulePhoneBookController extends BaseController
 
         $dataId = $this->request->getPost('id', ['string', 'trim']);
         $callId = $this->request->getPost('call_id', ['string', 'trim']);
-        $number = $this->request->getPost('number', ['alnum']);
-        $numberRep = $this->request->getPost('number_rep', ['string', 'trim'], $number);
+        $numberRep = $this->request->getPost('number_rep', ['string', 'trim']);
+        $number = PhoneBook::cleanPhoneNumber($numberRep, TRUE);
 
         if (empty($callId) || empty($number)) {
             return;
@@ -180,30 +180,7 @@ class ModulePhoneBookController extends BaseController
             $record = new PhoneBook();
         }
 
-        foreach ($record as $key => $value) {
-            switch ($key) {
-                case 'created':
-                    $record->created = 0;
-                    break;
-                case 'number':
-                    $record->number = $number;
-                    break;
-                case 'number_rep':
-                    $record->number_rep = $numberRep;
-                    break;
-                case 'call_id':
-                    $record->call_id = $callId;
-                    break;
-                case 'search_index':
-                    // Collect data for the search index
-                    $username = mb_strtolower($callId);
-                    // Combine all fields into a single string
-                    $record->search_index = $username . $number . $numberRep;
-                    break;
-                default:
-                    break;
-            }
-        }
+        $record->setPhonebookRecord($callId, $numberRep);
 
         if ($record->save() === false) {
             $errors = $record->getMessages();
