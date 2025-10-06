@@ -8,7 +8,7 @@
         <div class="ui nine wide column">
             <div class="ui search right action left icon fluid input" id="search-extensions-input">
                 <i class="search link icon" id="search-icon"></i>
-                <input type="search" id="global-search" name="global-search" placeholder="{{ t._('ex_EnterSearchPhrase') }}"
+                <input type="search" id="global-search" name="global-search" placeholder="{{ t._('module_phnbk_Search') }}"
                        aria-controls="KeysTable" class="prompt">
                 <div class="results"></div>
                 <div class="ui basic floating search dropdown button" id="page-length-select">
