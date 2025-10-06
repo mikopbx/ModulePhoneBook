@@ -165,12 +165,10 @@ class ModulePhoneBookController extends BaseController
         }
 
         // If we are unable to change the primary field, delete the old record and recreate it
-        $oldId = null;
         $record = null;
         if (stripos($dataId, 'new') === false) {
             $record = PhoneBook::findFirstById($dataId);
             if ($record->number !== $number) {
-                $oldId = $record->id;
                 $record->delete();
                 $record = null;
             }
@@ -186,11 +184,11 @@ class ModulePhoneBookController extends BaseController
             $errors = $record->getMessages();
             $this->flash->error(implode('<br>', $errors));
             $this->view->success = false;
-
+            $this->response->setStatusCode(500);
             return;
         }
 
-        $this->view->data = ['oldId' => $oldId, 'newId' => $record->id];
+        $this->view->data = ['oldId' => $dataId, 'newId' => $record->id];
         $this->view->success = true;
     }
 
