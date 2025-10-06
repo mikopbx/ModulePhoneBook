@@ -112,9 +112,10 @@ class PhoneBookImport extends Injectable
      * @param string $callId The caller ID
      * @param string $numberRep The phone number in its original format (with special characters)
      * @param string $number The cleaned phone number (digits only)
+     * @param integer $created Created timestamp or 0
      * @return PBXApiResult The result of the save operation
      */
-    private function savePhonebookRecord(string $callId, string $numberRep, string $number): PBXApiResult
+    public function savePhonebookRecord(string $callId, string $numberRep, string $number, int $created = 0): PBXApiResult
     {
         $result = new PBXApiResult();
 
@@ -122,6 +123,7 @@ class PhoneBookImport extends Injectable
         $record->call_id = $callId;
         $record->number_rep = $numberRep;
         $record->number = $number;
+        $record->created = $created;
         // Collect data for the search index
         $username = mb_strtolower($callId);
         // Combine all fields into a single string
@@ -143,7 +145,7 @@ class PhoneBookImport extends Injectable
      * @param string $numberRep The original phone number (including special characters)
      * @return string The cleaned phone number (digits only)
      */
-    private function cleanPhoneNumber(string $numberRep): string
+    public function cleanPhoneNumber(string $numberRep): string
     {
         // Remove all non-numeric characters
         return preg_replace('/\D+/', '', $numberRep);
