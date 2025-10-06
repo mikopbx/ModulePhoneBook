@@ -47,6 +47,7 @@ return [
     'module_phnbk_RecognitionOnProgress' => 'Parsing and loading data from a file',
     'module_phnbk_RecognitionFinished' => 'Data loading completed',
     'module_phnbk_UrlNotValid' => 'Url not valid',
+    'module_phnbk_IntegerPositiveOrZero' => 'A positive integer or zero',
     'module_phnbk_СacheLifetime' => 'Cache lifetime',
     'module_phnbk_СacheLifetimeDescription' => 'The number of seconds during which the cached record will be valid. 0 - forever.',
     'module_phnbk_SaveBtn' => 'Save',
