@@ -80,11 +80,10 @@ class PhoneBookAgi extends Injectable
      *
      * @param string $number
      * @param string|null $number_orig
-     * @return object|null
+     * @return PhoneBook|null
      */
-    private static function findApiByNumber(string $number, ?string $number_orig = null): ?object
+    private static function findApiByNumber(string $number, ?string $number_orig = null): ?PhoneBook
     {
-        $return = null;
         if (!empty($number)) {
             $settings = Settings::findFirst();
             $url = !empty($settings->phoneBookApiUrl) ? str_replace(
@@ -94,29 +93,31 @@ class PhoneBookAgi extends Injectable
             ) : null;
 
             if (!empty($url)) {
-                $return = self::curl_get_contents($url);
+                $callerID = self::curl_get_contents($url);
 
                 // Logging
                 Util::sysLogMsg(
                     'PhoneBookAGI',
-                    'Find CallerID from API: ' . $number . ' => ' . (empty($return) ? 'NOT FOUND' : $return),
+                    'Find CallerID from API: ' . $number . ' => ' . (empty($callerID) ? 'NOT FOUND' : $callerID),
                     LOG_INFO
                 );
 
-                if (!empty($return)) {
+                if ($callerID !== NULL) {
                     // Saving the number in the phonebook
                     $numberRep = empty($number_orig) ? substr($number, -9) : $number_orig;
                     $record = new PhoneBook();
-                    $record->setPhonebookRecord($return, $record->cleanPhoneNumber($numberRep), $_SERVER['REQUEST_TIME']);
+                    $record->setPhonebookRecord($callerID, $record->cleanPhoneNumber($numberRep), $_SERVER['REQUEST_TIME']);
                     if (!$record->save()) {
                         // Log the error message if an exception occurs
                         Util::sysLogMsg('PhoneBookAGI', implode(' | ', $record->getMessages()), LOG_ERR);
+                    }else{
+                        return $record;
                     }
                 }
             }
         }
 
-        return empty($return) ? null : (object)['call_id' => trim($return), 'number' => $number];
+        return NULL;
     }
 
     /**
@@ -133,6 +134,6 @@ class PhoneBookAgi extends Injectable
         curl_setopt($ch, CURLOPT_TIMEOUT, 3); // Short timeout - 3 sec
         $result = curl_exec($ch);
         curl_close($ch);
-        return empty(trim($result)) ? null : trim($result);
+        return empty(trim($result)) ? NULL : trim($result);
     }
 }
