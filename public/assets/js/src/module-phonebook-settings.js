@@ -24,7 +24,7 @@ const ModulePhoneBookSettings = {
     $deleteAllRecordsButton: $('#delete-all-records'),
     $deleteAllModal: $('#delete-all-modal-form'),
     deleteAllRecordsAJAXUrl: `${globalRootUrl}module-phone-book/module-phone-book/deleteAllRecords`,
-    disableInputMaskAJAXUrl: `${globalRootUrl}module-phone-book/module-phone-book/toggleDisableInputMask`,
+    disableInputMaskAJAXUrl: `${globalRootUrl}module-phone-book/module-phone-book/saveSettings`,
 
     /**
      * Initialize the settings module for the phonebook.
@@ -101,7 +101,7 @@ const ModulePhoneBookSettings = {
             },
             onFailure(response) {
                 // Show error message if the update fails
-                UserMessage.showMultiString(response.messages);
+                UserMessage.showMultiString(response?.message ?? response.messages);
             },
         });
         return true;

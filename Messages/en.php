@@ -45,4 +45,5 @@ return [
     'module_phnbk_AllRecordsDeleted' => 'All entries have been deleted',
     'module_phnbk_RecognitionOnProgress' => 'Parsing and loading data from a file',
     'module_phnbk_RecognitionFinished' => 'Data loading completed',
+    'module_phnbk_UrlNotValid' => 'Url not valid',
 ];

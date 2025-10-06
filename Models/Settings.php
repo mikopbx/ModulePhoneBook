@@ -70,9 +70,9 @@ class Settings extends ModulesModelsBase
             new $callbackClass(
                 [
                     'callback' => function ($data) {
-                        return filter_var($data['phoneBookApiUrl'], FILTER_VALIDATE_URL) && stripos($data['phoneBookApiUrl'], '%number%') !== FALSE;
+                        return empty($data->phoneBookApiUrl) || (filter_var($data->phoneBookApiUrl, FILTER_VALIDATE_URL) && stripos($data->phoneBookApiUrl, '%number%') !== FALSE);
                     },
-                    'message' => $this->t('module_phnbk_AlreadyExistWithThisNumber'),
+                    'message' => $this->t('module_phnbk_UrlNotValid'),
                 ]
             )
         );
