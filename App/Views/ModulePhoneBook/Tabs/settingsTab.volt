@@ -26,12 +26,12 @@
         </div>
         <div class="ui segment">
             <div class="wide field">
-                <label>phoneBookApiUrl</label>
+                <label for="phoneBookApiUrl">phoneBookApiUrl</label>
                 {{ form.render('phoneBookApiUrl') }}
                 <div>%number% в строке адреса будет заменен на номер телефона</div>
             </div>
             <div class="wide field">
-                <label>phoneBookLifeTime</label>
+                <label for="phoneBookLifeTime">phoneBookLifeTime</label>
                 {{ form.render('phoneBookLifeTime') }}
                 <div>Время жизни записанных строк</div>
             </div>
