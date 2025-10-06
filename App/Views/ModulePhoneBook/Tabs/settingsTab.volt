@@ -26,17 +26,17 @@
         </div>
         <div class="ui segment">
             <div class="wide field">
-                <label for="phoneBookApiUrl">phoneBookApiUrl</label>
+                <label for="phoneBookApiUrl">{{ t._('module_phnbk_ApiUrl') }}</label>
                 {{ form.render('phoneBookApiUrl') }}
-                <div>%number% в строке адреса будет заменен на номер телефона</div>
+                <div>{{ t._('module_phnbk_ApiUrlDescription', {'repesent': '%number%'}) }}</div>
             </div>
             <div class="wide field">
-                <label for="phoneBookLifeTime">phoneBookLifeTime</label>
+                <label for="phoneBookLifeTime">{{ t._('module_phnbk_СacheLifetime') }}</label>
                 {{ form.render('phoneBookLifeTime') }}
-                <div>Время жизни записанных строк</div>
+                <div>{{ t._('module_phnbk_СacheLifetimeDescription') }}</div>
             </div>
             <div class="field">
-                <div class="ui labeled icon basic button" id="btn-save-settings-api"><i class="save icon"></i>{{ t._('Save') }}</div>
+                <div class="ui labeled icon basic button" id="btn-save-settings-api"><i class="save icon"></i>{{ t._('module_phnbk_SaveBtn') }}</div>
             </div>
         </div>
     </div>
