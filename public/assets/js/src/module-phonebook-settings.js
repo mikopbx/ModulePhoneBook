@@ -111,7 +111,7 @@ const ModulePhoneBookSettings = {
             url: ModulePhoneBookSettings.saveSettingsAJAXUrl,
             on: 'now',
             method: 'POST',
-            data: { disableInputMask: currentState },
+            data: data,
             successTest: PbxApi.successTest,
             onSuccess(response) {
                 window.location.reload();

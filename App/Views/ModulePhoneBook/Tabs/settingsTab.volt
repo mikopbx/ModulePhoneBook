@@ -36,7 +36,7 @@
                 <div>{{ t._('module_phnbk_СacheLifetimeDescription') }}</div>
             </div>
             <div class="field">
-                <div class="ui labeled icon basic button" id="btn-save-settings-api"><i class="save icon"></i>{{ t._('module_phnbk_SaveBtn') }}</div>
+                <div class="ui labeled icon positive button" id="btn-save-settings-api"><i class="save icon"></i>{{ t._('module_phnbk_SaveBtn') }}</div>
             </div>
         </div>
     </div>

@@ -58,6 +58,7 @@ return [
     'module_phnbk_RecognitionOnProgress' => 'Разбор и загрузка данных из файла',
     'module_phnbk_RecognitionFinished' => 'Загрузка данных выполнена',
     'module_phnbk_UrlNotValid' => 'Недопустимый URL-адрес',
+    'module_phnbk_IntegerPositiveOrZero' => 'Целое положительное число или ноль',
     'module_phnbk_СacheLifetime' => 'Время жизни кеша',
     'module_phnbk_СacheLifetimeDescription' => 'Количество секунд, в течение которых кэшированная запись будет действительна. 0 - навсегда.',
     'module_phnbk_SaveBtn' => 'Сохранить',

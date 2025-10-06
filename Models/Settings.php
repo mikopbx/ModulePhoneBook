@@ -77,6 +77,18 @@ class Settings extends ModulesModelsBase
             )
         );
 
+        $validation->add(
+            'phoneBookLifeTime',
+            new $callbackClass(
+                [
+                    'callback' => function ($data) {
+                        return $data->phoneBookLifeTime>=0;
+                    },
+                    'message' => $this->t('module_phnbk_СacheLifetime') . ' - ' . $this->t('module_phnbk_IntegerPositiveOrZero'),
+                ]
+            )
+        );
+
         return $this->validate($validation);
     }
 }

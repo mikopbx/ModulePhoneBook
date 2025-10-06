@@ -266,7 +266,9 @@ class ModulePhoneBookController extends BaseController
 
         if ($this->request->hasPost('disableInputMask')) {
             $settings->disableInputMask = $this->request->getPost('disableInputMask') === 'true' ? '1' : '0';
-        } elseif ($this->request->hasPost('phoneBookApiUrl')) {
+        }
+
+        if ($this->request->hasPost('phoneBookApiUrl')) {
             $settings->phoneBookApiUrl = empty($this->request->getPost('phoneBookApiUrl')) ? NULL : trim($this->request->getPost('phoneBookApiUrl'));
             $settings->phoneBookLifeTime = empty($this->request->getPost('phoneBookLifeTime')) ? 0 : $this->request->getPost('phoneBookLifeTime');
         }
