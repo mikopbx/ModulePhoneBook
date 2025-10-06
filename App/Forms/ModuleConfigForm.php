@@ -21,6 +21,7 @@
 namespace Modules\ModulePhoneBook\App\Forms;
 
 use MikoPBX\AdminCabinet\Forms\BaseForm;
+use Phalcon\Forms\Element\Text;
 use Phalcon\Forms\Element\Check;
 use Phalcon\Forms\Element\File;
 
@@ -30,6 +31,12 @@ class ModuleConfigForm extends BaseForm
     {
         // DisableInputMask
         $this->addCheckBox('disableInputMask', intval($entity->disableInputMask) === 1);
+
+        // phoneBookApiUrl Text field
+        $this->add(new Text('phoneBookApiUrl'));
+
+        // phoneBookLifeTime Text field
+        $this->add(new Text('phoneBookLifeTime'));
 
         // Excel file
         $excelFile = new File('excelFile');

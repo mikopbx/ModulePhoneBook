@@ -24,6 +24,21 @@
                 <label for="disableInputMask">{{ t._('module_phnbk_disableInputMask') }}</label>
             </div>
         </div>
+        <div class="ui segment">
+            <div class="wide field">
+                <label>phoneBookApiUrl</label>
+                {{ form.render('phoneBookApiUrl') }}
+                <div>%number% в строке адреса будет заменен на номер телефона</div>
+            </div>
+            <div class="wide field">
+                <label>phoneBookLifeTime</label>
+                {{ form.render('phoneBookLifeTime') }}
+                <div>Время жизни записанных строк</div>
+            </div>
+            <div class="field">
+                <div class="ui labeled icon basic button" id="btn-save-settings-api"><i class="save icon"></i>{{ t._('Save') }}</div>
+            </div>
+        </div>
     </div>
     <div class="field">
         <div class="ui labeled icon basic button" id="delete-all-records"><i class="red trash icon"></i>{{ t._('module_phnbk_DeleteAllRecords') }}</div>
