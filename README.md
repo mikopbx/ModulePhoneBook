@@ -33,13 +33,13 @@ CREATE TABLE m_PhoneBook (
     number_rep VARCHAR(255),  -- Display format (e.g., +7(906)555-43-43)
     call_id VARCHAR(255),     -- Caller ID display name
     search_index TEXT,        -- Combined search field for full-text search
-    expired INTEGER DEFAULT 0 -- Created timestamp or 0
+    created INTEGER DEFAULT 0 -- Created timestamp or 0
 );
 
 -- Indexes
 CREATE INDEX number ON m_PhoneBook (number);
 CREATE INDEX CallerID ON m_PhoneBook (call_id);
-CREATE INDEX Expired ON m_PhoneBook (expired);
+CREATE INDEX Created ON m_PhoneBook (created);
 ```
 
 ### Settings Table (m_ModulePhoneBook)
