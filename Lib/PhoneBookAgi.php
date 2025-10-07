@@ -54,18 +54,18 @@ class PhoneBookAgi extends Injectable
             }
             $number_orig = $number;
             // Normalize the phone number to match the expected format (last 9 digits)
-            $number = PhoneBook::cleanPhoneNumber($number, true);
+            $number = PhoneBook::cleanPhoneNumber($number, TRUE);
 
             // Find the corresponding phonebook entry by the number
             $result = PhoneBook::findFirstByNumber($number);
 
-            if (!($result !== null && !empty($result->call_id))) {
+            if (!($result !== NULL && !empty($result->call_id))) {
                 // The record was not found - we are searching through the API
                 $result = self::findApiByNumber($number, $number_orig);
             }
 
             // If a matching record is found and the call_id is not empty, set the appropriate caller ID
-            if ($result !== null && !empty($result->call_id)) {
+            if ($result !== NULL && !empty($result->call_id)) {
                 if ($type === 'in') {
                     $agi->set_variable('CALLERID(name)', $result->call_id);
                 } else {
@@ -85,7 +85,7 @@ class PhoneBookAgi extends Injectable
      * @param string|null $number_orig
      * @return PhoneBook|null
      */
-    private static function findApiByNumber(string $number, ?string $number_orig = null): ?PhoneBook
+    private static function findApiByNumber(string $number, ?string $number_orig = NULL): ?PhoneBook
     {
         if (!empty($number)) {
             $settings = Settings::findFirst();
@@ -93,7 +93,7 @@ class PhoneBookAgi extends Injectable
                 '%number%',
                 $number,
                 $settings->phoneBookApiUrl
-            ) : null;
+            ) : NULL;
 
             if (!empty($url)) {
                 $callerID = self::curl_get_contents($url);
@@ -105,7 +105,7 @@ class PhoneBookAgi extends Injectable
                     LOG_INFO
                 );
 
-                if ($callerID !== null) {
+                if ($callerID !== NULL) {
                     // Saving the number in the phonebook
                     $numberRep = empty($number_orig) ? substr($number, -9) : $number_orig;
                     $record = new PhoneBook();
@@ -124,7 +124,7 @@ class PhoneBookAgi extends Injectable
             }
         }
 
-        return null;
+        return NULL;
     }
 
     /**
@@ -135,7 +135,7 @@ class PhoneBookAgi extends Injectable
      */
     private static function curl_get_contents(string $url): ?string
     {
-        $callerId = null;
+        $callerId = NULL;
         try {
             $client = new Client([
                 'timeout' => 3,
@@ -146,15 +146,14 @@ class PhoneBookAgi extends Injectable
             if ($status === 200) {
                 $callerId = trim($response->getBody()->getContents());
             }
-        }catch (ClientException $e) {
+        } catch (ClientException $e) {
             // ClientException only catches status code between 400x-499
             //Util::sysLogMsg('PhoneBookAGI', $e->getMessage(), LOG_ERR);
-        }
-        catch (GuzzleException $e) {
+        } catch (GuzzleException $e) {
             // Log the error message if an exception occurs
             Util::sysLogMsg('PhoneBookAGI', $e->getMessage(), LOG_ERR);
         }
 
-        return !empty($callerId) ? $callerId : null;
+        return !empty($callerId) ? $callerId : NULL;
     }
 }
