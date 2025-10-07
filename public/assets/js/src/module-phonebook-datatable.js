@@ -310,7 +310,7 @@ const ModulePhoneBookDT = {
      * @param {Object} data - The data object for the row.
      */
     buildRowTemplate(row, data) {
-        const btnDeleteColor = data.created > 0 ? `blue` : `red`;
+        const btnDeleteColor = data.created > 0 ? 'icon trash blue' : 'icon trash red';
         const nameTemplate = `
             <div class="ui transparent fluid input inline-edit">
                 <input class="caller-id-input" type="text" value="${data.call_id}" />
@@ -322,7 +322,7 @@ const ModulePhoneBookDT = {
         const deleteButtonTemplate = `
             <div class="ui basic icon buttons action-buttons tiny">
                 <a href="#" data-value="${data.DT_RowId}" class="ui delete button">
-                    <i class="icon trash ${btnDeleteColor}"></i>
+                    <i class="${btnDeleteColor}"></i>
                 </a>
             </div>`;
 
