@@ -318,7 +318,7 @@ const ModulePhoneBookDT = {
             </div>`;
         const deleteButtonTemplate = `<div class="ui basic icon buttons action-buttons tiny">
                 <a href="#" data-value="${data.DT_RowId}" class="ui delete button">
-                    <i class="icon trash ` + (data?.created > 0 ? `blue` : `red`) + `" />
+                    <i class="icon trash ${data?.created > 0 ? 'blue' : 'red'}" />
                 </a>
             </div>`;
 
