@@ -3,7 +3,8 @@
     "description": "ModulePhoneBook",
     "require": {
         "php": "^7.4",
-        "maennchen/zipstream-php":"2.2.6",
+        "guzzlehttp/guzzle": "^7.10",
+        "maennchen/zipstream-php": "2.2.6",
         "phpoffice/phpspreadsheet": "1.29.2"
     },
     "autoload": {

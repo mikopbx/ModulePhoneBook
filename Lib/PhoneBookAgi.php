@@ -25,6 +25,9 @@ use MikoPBX\Core\System\Util;
 use Modules\ModulePhoneBook\Models\PhoneBook;
 use Modules\ModulePhoneBook\Models\Settings;
 use Phalcon\Di\Injectable;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * Class PhoneBookAgi
@@ -51,12 +54,12 @@ class PhoneBookAgi extends Injectable
             }
             $number_orig = $number;
             // Normalize the phone number to match the expected format (last 9 digits)
-            $number =  PhoneBook::cleanPhoneNumber($number, TRUE);
+            $number = PhoneBook::cleanPhoneNumber($number, true);
 
             // Find the corresponding phonebook entry by the number
             $result = PhoneBook::findFirstByNumber($number);
 
-            if (!($result !== NULL && !empty($result->call_id))){
+            if (!($result !== null && !empty($result->call_id))) {
                 // The record was not found - we are searching through the API
                 $result = self::findApiByNumber($number, $number_orig);
             }
@@ -102,22 +105,26 @@ class PhoneBookAgi extends Injectable
                     LOG_INFO
                 );
 
-                if ($callerID !== NULL) {
+                if ($callerID !== null) {
                     // Saving the number in the phonebook
                     $numberRep = empty($number_orig) ? substr($number, -9) : $number_orig;
                     $record = new PhoneBook();
-                    $record->setPhonebookRecord($callerID, $record->cleanPhoneNumber($numberRep), $_SERVER['REQUEST_TIME']);
+                    $record->setPhonebookRecord(
+                        $callerID,
+                        $record->cleanPhoneNumber($numberRep),
+                        time()
+                    );
                     if (!$record->save()) {
                         // Log the error message if an exception occurs
                         Util::sysLogMsg('PhoneBookAGI', implode(' | ', $record->getMessages()), LOG_ERR);
-                    }else{
+                    } else {
                         return $record;
                     }
                 }
             }
         }
 
-        return NULL;
+        return null;
     }
 
     /**
@@ -128,12 +135,26 @@ class PhoneBookAgi extends Injectable
      */
     private static function curl_get_contents(string $url): ?string
     {
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 3); // Short timeout - 3 sec
-        $result = curl_exec($ch);
-        curl_close($ch);
-        return empty(trim($result)) ? NULL : trim($result);
+        $callerId = null;
+        try {
+            $client = new Client([
+                'timeout' => 3,
+                'connect_timeout' => 2
+            ]);
+            $response = $client->get($url);
+            $status = $response->getStatusCode();
+            if ($status === 200) {
+                $callerId = trim($response->getBody()->getContents());
+            }
+        }catch (ClientException $e) {
+            // ClientException only catches status code between 400x-499
+            //Util::sysLogMsg('PhoneBookAGI', $e->getMessage(), LOG_ERR);
+        }
+        catch (GuzzleException $e) {
+            // Log the error message if an exception occurs
+            Util::sysLogMsg('PhoneBookAGI', $e->getMessage(), LOG_ERR);
+        }
+
+        return !empty($callerId) ? $callerId : null;
     }
 }
