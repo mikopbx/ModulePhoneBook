@@ -30,7 +30,7 @@ const ModulePhoneBookDT = {
      * The page length selector.
      * @type {jQuery}
      */
-    $pageLengthSelector:$('#page-length-select'),
+    $pageLengthSelector: $('#page-length-select'),
 
     /**
      * The page length selector.
@@ -147,7 +147,7 @@ const ModulePhoneBookDT = {
         // Handle page length selection
         this.$pageLengthSelector.dropdown({
             onChange(pageLength) {
-                if (pageLength==='auto'){
+                if (pageLength === 'auto') {
                     pageLength = this.calculatePageLength();
                     localStorage.removeItem('phonebookTablePageLength');
                 } else {
@@ -158,7 +158,7 @@ const ModulePhoneBookDT = {
         });
 
         // Prevent event bubbling on dropdown click
-        this.$pageLengthSelector.on('click', function(event) {
+        this.$pageLengthSelector.on('click', function (event) {
             event.stopPropagation(); // Prevent the event from bubbling
         });
     },
@@ -229,7 +229,7 @@ const ModulePhoneBookDT = {
         const pageLength = savedPageLength ? savedPageLength : this.calculatePageLength();
 
         this.$recordsTable.dataTable({
-            search: { search: this.$globalSearch.val() },
+            search: {search: this.$globalSearch.val()},
             serverSide: true,
             processing: true,
             ajax: {
@@ -238,10 +238,10 @@ const ModulePhoneBookDT = {
                 dataSrc: 'data',
             },
             columns: [
-                { data: null },
-                { data: 'call_id' },
-                { data: 'number' },
-                { data: null },
+                {data: null},
+                {data: 'call_id'},
+                {data: 'number'},
+                {data: null},
             ],
             paging: true,
             pageLength: pageLength,
@@ -310,19 +310,15 @@ const ModulePhoneBookDT = {
      * @param {Object} data - The data object for the row.
      */
     buildRowTemplate(row, data) {
-        const btnDeleteColor = data.created > 0 ? 'icon trash blue' : 'icon trash red';
-        const nameTemplate = `
-            <div class="ui transparent fluid input inline-edit">
+        const nameTemplate = `<div class="ui transparent fluid input inline-edit">
                 <input class="caller-id-input" type="text" value="${data.call_id}" />
             </div>`;
-        const numberTemplate = `
-            <div class="ui transparent input inline-edit">
+        const numberTemplate = `<div class="ui transparent input inline-edit">
                 <input class="number-input" type="text" value="${data.number}" />
             </div>`;
-        const deleteButtonTemplate = `
-            <div class="ui basic icon buttons action-buttons tiny">
+        const deleteButtonTemplate = `<div class="ui basic icon buttons action-buttons tiny">
                 <a href="#" data-value="${data.DT_RowId}" class="ui delete button">
-                    <i class="${btnDeleteColor}"></i>
+                    <i class="icon trash ` + (data?.created > 0 ? `blue` : `red`) + `" />
                 </a>
             </div>`;
 
@@ -364,7 +360,7 @@ const ModulePhoneBookDT = {
         $el.inputmasks({
             inputmask: {
                 definitions: {
-                    '#': { validator: '[0-9]', cardinality: 1 },
+                    '#': {validator: '[0-9]', cardinality: 1},
                 },
                 showMaskOnHover: false,
                 onBeforePaste: this.cbOnNumberBeforePaste,
