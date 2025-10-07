@@ -127,7 +127,7 @@ class PhoneBook extends ModulesModelsBase
      */
     public function setPhonebookRecord(string $callId, string $numberRep, int $created = 0): void
     {
-        $this->call_id = $callId;
+        $this->call_id = trim(strip_tags(str_replace('"',"'", $callId)));
         $this->number_rep = $numberRep;
         $this->number = $this->cleanPhoneNumber($numberRep, TRUE);
         $this->created = $created;
