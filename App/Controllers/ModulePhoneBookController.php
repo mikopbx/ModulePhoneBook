@@ -244,8 +244,8 @@ class ModulePhoneBookController extends BaseController
         }
 
         if ($this->request->hasPost('phoneBookApiUrl')) {
-            $settings->phoneBookApiUrl = empty($this->request->getPost('phoneBookApiUrl')) ? NULL : trim($this->request->getPost('phoneBookApiUrl'));
-            $settings->phoneBookLifeTime = empty($this->request->getPost('phoneBookLifeTime')) ? 0 : $this->request->getPost('phoneBookLifeTime');
+            $settings->phoneBookApiUrl = empty($this->request->getPost('phoneBookApiUrl')) ? NULL : $this->request->getPost('phoneBookApiUrl', 'trim');
+            $settings->phoneBookLifeTime = empty($this->request->getPost('phoneBookLifeTime')) ? 0 : $this->request->getPost('phoneBookLifeTime', 'int!');
         }
 
         if (!$settings->save()) {
