@@ -25,9 +25,6 @@ use MikoPBX\Core\System\Util;
 use Modules\ModulePhoneBook\Models\PhoneBook;
 use Modules\ModulePhoneBook\Models\Settings;
 use Phalcon\Di\Injectable;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * Class PhoneBookAgi
@@ -59,9 +56,13 @@ class PhoneBookAgi extends Injectable
             // Find the corresponding phonebook entry by the number
             $result = PhoneBook::findFirstByNumber($number);
 
-            if (!($result !== NULL && !empty($result->call_id))) {
+            $settings = Settings::findFirst();
+            $lifeTime = $settings->phoneBookLifeTime ?? 0;
+
+            if ($result === NULL || empty($result->call_id) || ($lifeTime > 0 && $result->created > 0 && $result->created + $lifeTime < time())) {
                 // The record was not found - we are searching through the API
-                $result = self::findApiByNumber($number, $number_orig);
+                $searcher = new PhoneBookFind();
+                $result = $searcher->findApiByNumber($number_orig, $result);
             }
 
             // If a matching record is found and the call_id is not empty, set the appropriate caller ID
@@ -76,84 +77,5 @@ class PhoneBookAgi extends Injectable
             // Log the error message if an exception occurs
             Util::sysLogMsg('PhoneBookAGI', $e->getMessage(), LOG_ERR);
         }
-    }
-
-    /**
-     * Find CallerID from API
-     *
-     * @param string $number
-     * @param string|null $number_orig
-     * @return PhoneBook|null
-     */
-    private static function findApiByNumber(string $number, ?string $number_orig = NULL): ?PhoneBook
-    {
-        if (!empty($number)) {
-            $settings = Settings::findFirst();
-            $url = !empty($settings->phoneBookApiUrl) ? str_replace(
-                '%number%',
-                $number,
-                $settings->phoneBookApiUrl
-            ) : NULL;
-
-            if (!empty($url)) {
-                $callerID = self::curl_get_contents($url);
-
-                // Logging
-                Util::sysLogMsg(
-                    'PhoneBookAGI',
-                    'Find CallerID from API: ' . $number . ' => ' . (empty($callerID) ? 'NOT FOUND' : $callerID),
-                    LOG_INFO
-                );
-
-                if ($callerID !== NULL) {
-                    // Saving the number in the phonebook
-                    $numberRep = empty($number_orig) ? substr($number, -9) : $number_orig;
-                    $record = new PhoneBook();
-                    $record->setPhonebookRecord(
-                        $callerID,
-                        $record->cleanPhoneNumber($numberRep),
-                        time()
-                    );
-                    if (!$record->save()) {
-                        // Log the error message if an exception occurs
-                        Util::sysLogMsg('PhoneBookAGI', implode(' | ', $record->getMessages()), LOG_ERR);
-                    } else {
-                        return $record;
-                    }
-                }
-            }
-        }
-
-        return NULL;
-    }
-
-    /**
-     * Get the $url content with CURL
-     *
-     * @param string $url
-     * @return string|null
-     */
-    private static function curl_get_contents(string $url): ?string
-    {
-        $callerId = NULL;
-        try {
-            $client = new Client([
-                'timeout' => 3,
-                'connect_timeout' => 2
-            ]);
-            $response = $client->get($url);
-            $status = $response->getStatusCode();
-            if ($status === 200) {
-                $callerId = trim($response->getBody()->getContents());
-            }
-        } catch (ClientException $e) {
-            // ClientException only catches status code between 400x-499
-            //Util::sysLogMsg('PhoneBookAGI', $e->getMessage(), LOG_ERR);
-        } catch (GuzzleException $e) {
-            // Log the error message if an exception occurs
-            Util::sysLogMsg('PhoneBookAGI', $e->getMessage(), LOG_ERR);
-        }
-
-        return !empty($callerId) ? $callerId : NULL;
     }
 }
