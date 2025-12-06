@@ -1,181 +1,169 @@
-# Phone Book Module for MIKOPBX
+# Phone Book Module for MikoPBX
 
-A comprehensive phone book management module for MIKOPBX that provides caller ID management, contact storage, and integration with the PBX system's inbound and outbound calls.
+[![GitHub release](https://img.shields.io/github/v/release/mikopbx/ModulePhoneBook)](https://github.com/mikopbx/ModulePhoneBook/releases)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+
+Contact management module for MikoPBX with real-time caller ID lookup on incoming and outgoing calls.
 
 ## Features
 
-- Real-time caller ID lookup for inbound and outbound calls
-- Contact management with formatted number display
-- Excel file import support
-- Full-text search capabilities
-- Input mask toggling for phone number formatting
-- Asterisk AGI integration for call processing
-- DataTable-based web interface
+- **Caller ID Lookup** — automatic name display for incoming and outgoing calls
+- **External API Integration** — lookup caller ID from external services with caching
+- **Excel Import** — bulk contact import from Excel files (.xlsx, .xls)
+- **Web Interface** — contact management via DataTable with search and pagination
+- **Input Masking** — automatic phone number formatting (optional)
+- **Multi-language** — 26 languages supported
 
-## System Requirements
+## Requirements
 
-- MIKOPBX version 2024.1.114 or higher
-- Modern web browser with JavaScript enabled
+- MikoPBX 2024.1.114 or higher
 
-## Database Structure
+## Installation
 
-The module uses SQLite database located at:
-`/storage/usbdisk1/mikopbx/custom_modules/ModulePhoneBook/db/module.db`
+1. Go to **Modules** → **Marketplace** in MikoPBX admin panel
+2. Find **Phone Book** module
+3. Click **Install**
 
-### Phone Book Table (m_PhoneBook)
-
-Main table storing contact information:
-
-```sql
-CREATE TABLE m_PhoneBook (
-    id INTEGER PRIMARY KEY AUTO_INCREMENT,
-    number INTEGER,           -- Normalized number (1 + last 9 digits)
-    number_rep VARCHAR(255),  -- Display format (e.g., +7(906)555-43-43)
-    call_id VARCHAR(255),     -- Caller ID display name
-    search_index TEXT,        -- Combined search field for full-text search
-    created INTEGER DEFAULT 0 -- Created timestamp or 0
-);
-
--- Indexes
-CREATE INDEX number ON m_PhoneBook (number);
-CREATE INDEX CallerID ON m_PhoneBook (call_id);
-CREATE INDEX Created ON m_PhoneBook (created);
-```
-
-### Settings Table (m_ModulePhoneBook)
-
-Module configuration storage:
-
-```sql
-CREATE TABLE m_ModulePhoneBook (
-    id INTEGER PRIMARY KEY AUTO_INCREMENT,
-    disableInputMask INTEGER DEFAULT 0,  -- Toggle for input mask functionality
-    phoneBookApiUrl TEXT,                -- Url for CallerID search
-    phoneBookLifeTime INTEGER DEFAULT 0  -- Lifetime in seconds
-);
-```
-
-## Phone Number Format
-
-The module uses a specific format for storing phone numbers:
-1. Original number gets cleaned from any non-digit characters
-2. Only the last 9 digits are kept
-3. Digit "1" is added at the beginning
-4. The result is stored in the 'number' field
-
-Example:
-```
-Original: +7 (906) 555-43-43
-Cleaned: 79065554343
-Last 9: 065554343
-Stored: 1065554343
-```
-
-This format ensures:
-- Consistent number storage
-- Quick lookups
-- Independence from country codes
-- Compatibility with various number formats
-
-## Core Components
-
-### Business Logic (Lib/)
-
-1. **PhoneBookConf.php** - Core configuration and PBX integration:
-   - Manages Asterisk dialplan integration
-   - Processes incoming/outgoing call routing
-
-2. **PhoneBookAgi.php** - Asterisk AGI integration:
-   - Real-time caller ID lookup
-   - Handles both incoming and outgoing calls
-   - Sets caller ID display names
-
-3. **PhoneBookImport.php** - Data import functionality:
-   - Excel file processing
-   - Data validation and normalization
-   - Bulk contact import
-
-### Frontend Features
-
-The module includes several JavaScript components:
-
-1. **DataTable Integration:**
-   - Server-side processing
-   - Real-time search
-   - Automatic page length calculation
-   - Saved state persistence
-
-2. **Input Masking:**
-   - Dynamic phone number formatting
-   - Multiple format support
-   - Configurable masks
-   - Toggle functionality
-
-3. **Excel Import:**
-   - File upload with progress tracking
-   - Background processing
-   - Error handling
-   - Automatic data normalization
+Or install from GitHub release:
+1. Download the latest `.zip` release
+2. Go to **Modules** → **Module Installation**
+3. Upload the archive
 
 ## Usage
 
-### Managing Contacts
+### Adding Contacts
 
-```php
-// Example: Adding a new contact
-$contact = new PhoneBook();
-$contact->number = '1065554343';        // Normalized format
-$contact->number_rep = '+7(906)555-43-43'; // Display format
-$contact->call_id = 'John Doe';
-$contact->search_index = 'johndoe1065554343+7(906)555-43-43';
-$contact->save();
+1. Navigate to **Phone Book** module
+2. Click **Add** button
+3. Enter name and phone number
+4. Press Enter or click outside the field to save
 
-// OR:
-$contact = new PhoneBook();
-$contact->setPhonebookRecord('John Doe', '+7(906)555-43-43');
-$contact->save();
+### Excel Import
+
+Prepare an Excel file with two columns:
+
+| Name | Phone Number |
+|------|--------------|
+| John Doe | +1 555 123-4567 |
+| ACME Corp | 18005551234 |
+
+1. Go to **Import** tab
+2. Select Excel file
+3. Click **Import**
+
+Phone numbers are normalized automatically — any format is accepted.
+
+### External API Lookup
+
+Configure external API for caller ID lookup:
+
+1. Go to **Settings** tab
+2. Enter API URL with `%number%` placeholder:
+   ```
+   https://api.example.com/lookup?phone=%number%
+   ```
+3. Set cache lifetime (seconds, 0 = no cache)
+4. Click **Save**
+
+The API should return plain text with the caller name.
+
+## How It Works
+
+### Phone Number Normalization
+
+Numbers are normalized for consistent storage and fast lookups:
+
+```
+Input:  +7 (906) 555-43-43
+Step 1: 79065554343      (digits only)
+Step 2: 065554343        (last 9 digits)
+Step 3: 1065554343       (prefix "1" added)
 ```
 
-### Excel Import Format
+This ensures matching works regardless of how numbers are dialed.
 
-The module accepts Excel files with the following structure:
+### Call Flow
+
+**Incoming calls:**
 ```
-| Name/Company    | Phone Number      |
-|-----------------|-------------------|
-| John Doe        | +1 (555) 123-4567 |
-| ACME Corp       | +1-777-888-9999   |
+Asterisk → AGI script → PhoneBook lookup → Set CALLERID(name)
 ```
 
-Phone numbers are automatically normalized during import.
+**Outgoing calls:**
+```
+Asterisk → CONNECTED_LINE_SEND_SUB → PhoneBook lookup → Set CONNECTEDLINE(name)
+```
 
-## Development
-
-### Class Structure
+## Architecture
 
 ```
 ModulePhoneBook/
+├── agi-bin/
+│   └── agi_phone_book.php      # Asterisk AGI entry point
+├── App/
+│   ├── Controllers/            # Phalcon MVC controllers
+│   ├── Forms/                  # Form definitions
+│   └── Views/                  # Volt templates
 ├── Lib/
-│   ├── PhoneBookConf.php     # PBX integration
-│   ├── PhoneBookAgi.php      # Asterisk AGI handler
-│   └── PhoneBookImport.php   # Import processor
+│   ├── PhoneBookConf.php       # Asterisk dialplan integration
+│   ├── PhoneBookAgi.php        # AGI caller ID handler
+│   ├── PhoneBookFind.php       # External API lookup
+│   └── PhoneBookImport.php     # Excel import processor
 ├── Models/
-│   ├── PhoneBook.php         # Contact storage
-│   └── Settings.php          # Configuration
-├── public/
-    └── assets/
-        └── js/
-            └── src/
-                ├── module-phonebook-datatable.js
-                ├── module-phonebook-import.js
-                └── module-phonebook-index.js
+│   ├── PhoneBook.php           # Contact model
+│   └── Settings.php            # Settings model
+├── public/assets/
+│   ├── css/                    # Module styles
+│   └── js/                     # JavaScript (ES6 source + compiled)
+└── Messages/                   # Translations (26 languages)
 ```
 
-## License
+## Database
 
-GNU General Public License v3.0 - see LICENSE file for details.
+SQLite database at `/storage/usbdisk1/mikopbx/custom_modules/ModulePhoneBook/db/module.db`
+
+**m_PhoneBook** — contacts:
+- `id` — primary key
+- `number` — normalized number for lookup
+- `number_rep` — display format
+- `call_id` — contact name
+- `search_index` — full-text search field
+- `created` — timestamp (for API cache expiration)
+
+**m_ModulePhoneBook** — settings:
+- `disableInputMask` — toggle input masking
+- `phoneBookApiUrl` — external API URL
+- `phoneBookLifeTime` — cache lifetime in seconds
+
+## Development
+
+### Build JavaScript
+
+```bash
+# Compile ES6 to ES5 with Babel
+babel public/assets/js/src/module-phonebook-datatable.js \
+  --out-dir public/assets/js \
+  --source-maps inline \
+  --presets airbnb
+```
+
+### PHP Syntax Check
+
+```bash
+php -l Lib/PhoneBookConf.php
+```
+
+## Links
+
+- [Documentation (EN)](https://docs.mikopbx.com/mikopbx/english/modules/miko/module-phone-book)
+- [Documentation (RU)](https://docs.mikopbx.com/mikopbx/modules/miko/phone-book)
+- [MikoPBX Website](https://mikopbx.com)
 
 ## Support
 
-- Documentation: [https://docs.mikopbx.com/mikopbx/modules/miko/phone-book](https://docs.mikopbx.com/mikopbx/modules/miko/phone-book)
 - Email: help@miko.ru
-- Issues: GitHub issue tracker
+- Issues: [GitHub Issues](https://github.com/mikopbx/ModulePhoneBook/issues)
+
+## License
+
+GPL-3.0 — see [LICENSE](LICENSE) file.
