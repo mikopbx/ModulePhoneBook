@@ -3,6 +3,8 @@
 [![GitHub release](https://img.shields.io/github/v/release/mikopbx/ModulePhoneBook)](https://github.com/mikopbx/ModulePhoneBook/releases)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
+**[Русская версия](README.ru.md)** | **English**
+
 Contact management module for MikoPBX with real-time caller ID lookup on incoming and outgoing calls.
 
 ## Features
@@ -66,6 +68,34 @@ Configure external API for caller ID lookup:
 4. Click **Save**
 
 The API should return plain text with the caller name.
+
+#### Example API Request/Response
+
+When a call comes from **+1 (555) 123-4567**, the module normalizes it to **1555123456** and makes an HTTP GET request:
+
+**Request:**
+```http
+GET https://api.example.com/lookup?phone=1555123456
+```
+
+**Response (plain text):**
+```
+John Doe
+```
+
+The name "John Doe" will be displayed as the caller ID on the phone. If the API returns an empty response or error, the module continues without displaying a name.
+
+**Example with company name:**
+```http
+GET https://api.example.com/lookup?phone=1800555123
+```
+
+**Response:**
+```
+ACME Corporation
+```
+
+The cache stores the response for the configured lifetime to reduce API calls for repeated numbers.
 
 ## How It Works
 
