@@ -55,7 +55,7 @@ class Settings extends ModulesModelsBase
     }
 
     /**
-     * Validates the instance by ensuring the uniqueness of the 'number' attribute.
+     * Validates the settings before saving.
      *
      * @return bool Returns true if validation passes, otherwise false.
      */
@@ -70,7 +70,20 @@ class Settings extends ModulesModelsBase
             new $callbackClass(
                 [
                     'callback' => function ($data) {
-                        return empty($data->phoneBookApiUrl) || (filter_var($data->phoneBookApiUrl, FILTER_VALIDATE_URL) && stripos($data->phoneBookApiUrl, '%number%') !== FALSE);
+                        if (empty($data->phoneBookApiUrl)) {
+                            return true;
+                        }
+                        // Check URL is valid
+                        if (!filter_var($data->phoneBookApiUrl, FILTER_VALIDATE_URL)) {
+                            return false;
+                        }
+                        // Check URL uses http/https scheme (SSRF protection)
+                        $scheme = parse_url($data->phoneBookApiUrl, PHP_URL_SCHEME);
+                        if (!in_array(strtolower($scheme), ['http', 'https'], true)) {
+                            return false;
+                        }
+                        // Check URL contains %number% placeholder
+                        return stripos($data->phoneBookApiUrl, '%number%') !== false;
                     },
                     'message' => $this->t('module_phnbk_UrlNotValid'),
                 ]
@@ -82,9 +95,9 @@ class Settings extends ModulesModelsBase
             new $callbackClass(
                 [
                     'callback' => function ($data) {
-                        return $data->phoneBookLifeTime>=0;
+                        return $data->phoneBookLifeTime >= 0;
                     },
-                    'message' => $this->t('module_phnbk_СacheLifetime') . ' - ' . $this->t('module_phnbk_IntegerPositiveOrZero'),
+                    'message' => $this->t('module_phnbk_CacheLifetime') . ' - ' . $this->t('module_phnbk_IntegerPositiveOrZero'),
                 ]
             )
         );

@@ -31,9 +31,9 @@
                 <div>{{ t._('module_phnbk_ApiUrlDescription', {'repesent': '%number%'}) }}</div>
             </div>
             <div class="wide field">
-                <label for="phoneBookLifeTime">{{ t._('module_phnbk_СacheLifetime') }}</label>
+                <label for="phoneBookLifeTime">{{ t._('module_phnbk_CacheLifetime') }}</label>
                 {{ form.render('phoneBookLifeTime') }}
-                <div>{{ t._('module_phnbk_СacheLifetimeDescription') }}</div>
+                <div>{{ t._('module_phnbk_CacheLifetimeDescription') }}</div>
             </div>
             <div class="field">
                 <div class="ui labeled icon positive button" id="btn-save-settings-api"><i class="save icon"></i>{{ t._('module_phnbk_SaveBtn') }}</div>

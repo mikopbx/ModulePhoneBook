@@ -57,12 +57,15 @@ class PhoneBookAgi extends Injectable
             $result = PhoneBook::findFirstByNumber($number);
 
             $settings = Settings::findFirst();
-            $lifeTime = $settings->phoneBookLifeTime ?? 0;
+            $lifeTime = ($settings !== null) ? ($settings->phoneBookLifeTime ?? 0) : 0;
+            $apiUrl = ($settings !== null) ? ($settings->phoneBookApiUrl ?? '') : '';
 
-            if ($result === NULL || empty($result->call_id) || ($lifeTime > 0 && $result->created > 0 && $result->created + $lifeTime < time())) {
-                // The record was not found - we are searching through the API
-                $searcher = new PhoneBookFind();
-                $result = $searcher->findApiByNumber($number_orig, $result);
+            if ($result === null || empty($result->call_id) || ($lifeTime > 0 && $result->created > 0 && $result->created + $lifeTime < time())) {
+                // The record was not found or expired - search through the API if configured
+                if (!empty($apiUrl)) {
+                    $searcher = new PhoneBookFind();
+                    $result = $searcher->findApiByNumber($number_orig, $result);
+                }
             }
 
             // If a matching record is found and the call_id is not empty, set the appropriate caller ID

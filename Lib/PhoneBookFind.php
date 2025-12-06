@@ -53,16 +53,11 @@ class PhoneBookFind extends Injectable
         }
 
         $settings = Settings::findFirst();
-        $url = !empty($settings->phoneBookApiUrl) ? str_replace(
-            '%number%',
-            $number,
-            $settings->phoneBookApiUrl
-        ) : NULL;
-
-        if (empty($url)) {
-            return NULL;
+        $apiUrl = ($settings !== null) ? ($settings->phoneBookApiUrl ?? '') : '';
+        if (empty($apiUrl)) {
+            return null;
         }
-
+        $url = str_replace('%number%', $number, $apiUrl);
         $callerID = $this->getRequest($url);
 
         // Logging
@@ -83,7 +78,7 @@ class PhoneBookFind extends Injectable
 
             $record->setPhonebookRecord(
                 $callerID,
-                $record->cleanPhoneNumber($number_search),
+                $number_search,
                 time()
             );
 
@@ -115,12 +110,11 @@ class PhoneBookFind extends Injectable
             $response = $client->get($url);
             $status = $response->getStatusCode();
             if ($status === 200) {
+                // Just trim here, sanitization is done in PhoneBook::setPhonebookRecord()
                 $callerId = trim($response->getBody()->getContents());
-                $callerId = trim(strip_tags(str_replace('"', "'", $callerId)));
             }
         } catch (ClientException $e) {
-            // ClientException only catches status code between 400x-499
-            //Util::sysLogMsg('PhoneBookAGI', $e->getMessage(), LOG_ERR);
+            // ClientException catches 4xx errors - not logging as these are expected
         } catch (GuzzleException $e) {
             // Log the error message if an exception occurs
             Util::sysLogMsg('PhoneBookAGI', $e->getMessage(), LOG_ERR);

@@ -59,8 +59,8 @@ return [
     'module_phnbk_RecognitionFinished' => 'Загрузка данных выполнена',
     'module_phnbk_UrlNotValid' => 'Недопустимый URL-адрес',
     'module_phnbk_IntegerPositiveOrZero' => 'Целое положительное число или ноль',
-    'module_phnbk_СacheLifetime' => 'Время жизни кеша',
-    'module_phnbk_СacheLifetimeDescription' => 'Количество секунд, в течение которых кэшированная запись будет действительна. 0 - навсегда.',
+    'module_phnbk_CacheLifetime' => 'Время жизни кеша',
+    'module_phnbk_CacheLifetimeDescription' => 'Количество секунд, в течение которых кэшированная запись будет действительна. 0 - навсегда.',
     'module_phnbk_SaveBtn' => 'Сохранить',
     'module_phnbk_ApiUrl' => 'URL-адрес для поиска CallerID',
     'module_phnbk_ApiUrlDescription' => '%repesent% в строке будет заменен на номер телефона.'
