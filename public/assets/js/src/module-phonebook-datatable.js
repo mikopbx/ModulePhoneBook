@@ -97,15 +97,10 @@ const ModulePhoneBookDT = {
 
     /**
      * Initialize the search functionality.
-     * It listens for key events and applies a filter based on the user's input.
+     * Sets up the search input field ready for use.
      */
     initializeSearch() {
-        this.$globalSearch.on('keyup', (e) => {
-            const searchText = this.$globalSearch.val().trim();
-            if (e.keyCode === 13 || e.keyCode === 8 || searchText.length === 0) {
-                this.applyFilter(searchText);
-            }
-        });
+        // Search handler is initialized in initializeDataTable() with debounce
     },
 
     /**

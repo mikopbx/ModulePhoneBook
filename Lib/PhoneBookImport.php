@@ -65,8 +65,13 @@ class PhoneBookImport extends Injectable
 
             // Iterate over rows and process each record
             for ($row = 2; $row <= $highestRow; ++$row) {
-                $callId = $sheet->getCell([1, $row])->getValue();
-                $numberRep = $sheet->getCell([2, $row])->getValue();
+                $callId = (string)($sheet->getCell([1, $row])->getValue() ?? '');
+                $numberRep = (string)($sheet->getCell([2, $row])->getValue() ?? '');
+
+                // Skip empty rows
+                if (empty($callId) && empty($numberRep)) {
+                    continue;
+                }
 
                 $res = $this->savePhonebookRecord($callId, $numberRep);
                 if (!$res->success) {

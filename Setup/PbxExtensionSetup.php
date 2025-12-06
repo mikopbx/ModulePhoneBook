@@ -46,9 +46,8 @@ class PbxExtensionSetup extends PbxExtensionSetupBase
                 $username = mb_strtolower($record->call_id);
                 // Combine all fields into a single string
                 $record->search_index =  $username . $record->number . $record->number_rep;
-                $result = $record->save();
-                if (!$result) {
-                    SystemMessages::sysLogMsg(__METHOD__, implode(' ', $result->getMessages()));
+                if (!$record->save()) {
+                    SystemMessages::sysLogMsg(__METHOD__, implode(' ', $record->getMessages()));
                     return false;
                 }
             }

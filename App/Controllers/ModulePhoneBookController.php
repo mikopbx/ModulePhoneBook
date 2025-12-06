@@ -168,7 +168,7 @@ class ModulePhoneBookController extends BaseController
         $record = null;
         if (stripos($dataId, 'new') === false) {
             $record = PhoneBook::findFirstById($dataId);
-            if ($record->number !== $number) {
+            if ($record !== null && $record->number !== $number) {
                 $record->delete();
                 $record = null;
             }
@@ -213,16 +213,18 @@ class ModulePhoneBookController extends BaseController
      */
     public function deleteAllRecordsAction(): void
     {
-        $records = PhoneBook::find();
-        foreach ($records as $record) {
-            if (!$record->delete()) {
-                $this->flash->error(implode('<br>', $record->getMessages()));
-                $this->view->result = false;
-                return;
-            }
+        $phoneBook = new PhoneBook();
+        $connection = $phoneBook->getWriteConnection();
+        $tableName = $phoneBook->getSource();
+
+        try {
+            $connection->execute("DELETE FROM {$tableName}");
+            $this->view->result = true;
+            $this->view->reload = 'module-phone-book/module-phone-book/index';
+        } catch (\Throwable $e) {
+            $this->flash->error($e->getMessage());
+            $this->view->result = false;
         }
-        $this->view->result = true;
-        $this->view->reload = 'module-phone-book/module-phone-book/index';
     }
 
     /**
