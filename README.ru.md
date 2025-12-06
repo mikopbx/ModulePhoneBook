@@ -171,10 +171,7 @@ SQLite база данных: `/storage/usbdisk1/mikopbx/custom_modules/ModulePh
 
 ```bash
 # Компиляция ES6 в ES5 с помощью Babel
-babel public/assets/js/src/module-phonebook-datatable.js \
-  --out-dir public/assets/js \
-  --source-maps inline \
-  --presets airbnb
+docker run --rm -v ~/mikopbx:/workspace ghcr.io/mikopbx/babel-compiler:latest /workspace/Extensions/[module]/public/assets/js/src/[file] extension`
 ```
 
 ### Проверка синтаксиса PHP

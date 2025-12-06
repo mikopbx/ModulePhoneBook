@@ -171,10 +171,7 @@ SQLite database at `/storage/usbdisk1/mikopbx/custom_modules/ModulePhoneBook/db/
 
 ```bash
 # Compile ES6 to ES5 with Babel
-babel public/assets/js/src/module-phonebook-datatable.js \
-  --out-dir public/assets/js \
-  --source-maps inline \
-  --presets airbnb
+docker run --rm -v ~/mikopbx:/workspace ghcr.io/mikopbx/babel-compiler:latest /workspace/Extensions/[module]/public/assets/js/src/[file] extension`
 ```
 
 ### PHP Syntax Check
