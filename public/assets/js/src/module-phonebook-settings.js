@@ -23,8 +23,11 @@ const ModulePhoneBookSettings = {
     $disableInputMaskToggle: $('#disable-input-mask'),
     $deleteAllRecordsButton: $('#delete-all-records'),
     $deleteAllModal: $('#delete-all-modal-form'),
+    $saveSettingsApiButton: $('#btn-save-settings-api'),
+    $inputPhoneBookApiUrl: $('#phoneBookApiUrl'),
+    $phoneBookLifeTime: $('#phoneBookLifeTime'),
     deleteAllRecordsAJAXUrl: `${globalRootUrl}module-phone-book/module-phone-book/deleteAllRecords`,
-    disableInputMaskAJAXUrl: `${globalRootUrl}module-phone-book/module-phone-book/toggleDisableInputMask`,
+    saveSettingsAJAXUrl: `${globalRootUrl}module-phone-book/module-phone-book/saveSettings`,
 
     /**
      * Initialize the settings module for the phonebook.
@@ -36,12 +39,17 @@ const ModulePhoneBookSettings = {
 
         // Set up the checkbox for disabling/enabling the input mask
         ModulePhoneBookSettings.$disableInputMaskToggle.checkbox({
-            onChange: ModulePhoneBookSettings.onChangeInputMaskToggle
+            onChange: ModulePhoneBookSettings.onSaveSettingsApi
         });
 
         // Attach event listener for the "Delete All Records" button
         ModulePhoneBookSettings.$deleteAllRecordsButton.on('click', function () {
             ModulePhoneBookSettings.deleteAllRecords();
+        });
+
+        // Save settings
+        ModulePhoneBookSettings.$saveSettingsApiButton.on('click', function () {
+            ModulePhoneBookSettings.onSaveSettingsApi(false);
         });
     },
 
@@ -85,23 +93,32 @@ const ModulePhoneBookSettings = {
     /**
      * Handle the toggle of the input mask.
      * Sends a request to update the setting for enabling or disabling input masks.
+     *
+     * @param {boolean} isOnlyInputMask
+     * @returns {boolean}
      */
-    onChangeInputMaskToggle() {
-        const currentState = ModulePhoneBookSettings.$disableInputMaskToggle.checkbox('is checked');
+    onSaveSettingsApi(isOnlyInputMask = true) {
+        const data = {}
+        if(isOnlyInputMask){
+            data.disableInputMask = ModulePhoneBookSettings.$disableInputMaskToggle.checkbox('is checked');
+        }else{
+            data.phoneBookApiUrl = ModulePhoneBookSettings.$inputPhoneBookApiUrl.val();
+            data.phoneBookLifeTime = ModulePhoneBookSettings.$phoneBookLifeTime.val();
+        }
 
         // Send request to toggle the input mask setting
         $.api({
-            url: ModulePhoneBookSettings.disableInputMaskAJAXUrl,
+            url: ModulePhoneBookSettings.saveSettingsAJAXUrl,
             on: 'now',
             method: 'POST',
-            data: { disableInputMask: currentState },
+            data: data,
             successTest: PbxApi.successTest,
             onSuccess(response) {
                 window.location.reload();
             },
             onFailure(response) {
                 // Show error message if the update fails
-                UserMessage.showMultiString(response.messages);
+                UserMessage.showMultiString(response?.message ?? response.messages);
             },
         });
         return true;

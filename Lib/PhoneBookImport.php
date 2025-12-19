@@ -65,12 +65,15 @@ class PhoneBookImport extends Injectable
 
             // Iterate over rows and process each record
             for ($row = 2; $row <= $highestRow; ++$row) {
-                $callId = $sheet->getCell([1, $row])->getValue();
-                $numberRep = $sheet->getCell([2, $row])->getValue();
-                $number = $this->cleanPhoneNumber($numberRep);
-                $number = '1' . substr($number, -9); // Add 1 to the beginning of the number
+                $callId = (string)($sheet->getCell([1, $row])->getValue() ?? '');
+                $numberRep = (string)($sheet->getCell([2, $row])->getValue() ?? '');
 
-                $res = $this->savePhonebookRecord($callId, $numberRep, $number);
+                // Skip empty rows
+                if (empty($callId) && empty($numberRep)) {
+                    continue;
+                }
+
+                $res = $this->savePhonebookRecord($callId, $numberRep);
                 if (!$res->success) {
                     $result->success = false;
                     $result->messages['error'] = array_merge($result->messages['error']??[], $res->messages['error']??[]);
@@ -111,21 +114,15 @@ class PhoneBookImport extends Injectable
      *
      * @param string $callId The caller ID
      * @param string $numberRep The phone number in its original format (with special characters)
-     * @param string $number The cleaned phone number (digits only)
      * @return PBXApiResult The result of the save operation
      */
-    private function savePhonebookRecord(string $callId, string $numberRep, string $number): PBXApiResult
+    private function savePhonebookRecord(string $callId, string $numberRep): PBXApiResult
     {
         $result = new PBXApiResult();
 
         $record = new PhoneBook();
-        $record->call_id = $callId;
-        $record->number_rep = $numberRep;
-        $record->number = $number;
-        // Collect data for the search index
-        $username = mb_strtolower($callId);
-        // Combine all fields into a single string
-        $record->search_index = $username . $number . $numberRep;
+        $record->setPhonebookRecord($callId, $numberRep);
+
         if (!$record->save()) {
             $errors = implode('<br>', $record->getMessages());
             $message = $this->translation->_("module_phnbk_ImportError");
@@ -135,17 +132,5 @@ class PhoneBookImport extends Injectable
 
         $result->success = true;
         return $result;
-    }
-
-    /**
-     * Clean phone number by removing non-numeric characters
-     *
-     * @param string $numberRep The original phone number (including special characters)
-     * @return string The cleaned phone number (digits only)
-     */
-    private function cleanPhoneNumber(string $numberRep): string
-    {
-        // Remove all non-numeric characters
-        return preg_replace('/\D+/', '', $numberRep);
     }
 }

@@ -26,7 +26,7 @@ return [
     'module_phnbk_ExcelInstructionStep2_2' => '<strong>電話番号</strong> - <em>+7(926)123-45-67</em>の形式。',
     'module_phnbk_ExcelInstructionStep3' => '各行は電話帳のエントリを表します。',
     'module_phnbk_ImportError' => 'エントリの保存中にエラーが発生しました',
-    'module_phnbk_ExcelInstructionStep1' => 'ファイルの形式は <strong>.xls</strong> または <strong>.xlsx.</strong> である必要があります。',
+    'module_phnbk_ExcelInstructionStep1' => 'ファイルの形式は <strong>.xls</strong> または <strong>.xlsx.</strong> である必要があります',
     'module_phnbk_ExcelInstructionStep2' => 'ファイルには次の 2 つの列が含まれている必要があります。',
     'module_phnbk_ExcelInstructionStep2_1' => '<strong>CallerID</strong> - 加入者名 (例: Ivan Ivanov)。',
     'module_phnbk_ExcelInstructionStep4' => 'アップロードする前に、ファイル内のデータが正しいことを確認してください。',

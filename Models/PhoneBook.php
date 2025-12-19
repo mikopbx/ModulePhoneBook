@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License along with this program.
  * If not, see <https://www.gnu.org/licenses/>.
  */
+
 namespace Modules\ModulePhoneBook\Models;
 
 use MikoPBX\Modules\Models\ModulesModelsBase;
@@ -30,7 +31,8 @@ use Modules\ModulePhoneBook\Lib\MikoPBXVersion;
  * @method static mixed findFirstByNumber(array|string|int $parameters = null)
  * @Indexes(
  *     [name='number', columns=['number'], type=''],
- *     [name='CallerID', columns=['CallerID'], type='']
+ *     [name='CallerID', columns=['CallerID'], type=''],
+ *     [name='Created', columns=['created'], type='']
  * )
  */
 class PhoneBook extends ModulesModelsBase
@@ -72,6 +74,13 @@ class PhoneBook extends ModulesModelsBase
     public ?string $search_index = "";
 
     /**
+     * Created - Created timestamp or 0
+     *
+     * @Column(type="integer", nullable=false, default=0)
+     */
+    public int $created = 0;
+
+    /**
      * Initializes the model by setting the source table,
      * calling the parent initializer, and enabling dynamic updates.
      *
@@ -106,5 +115,39 @@ class PhoneBook extends ModulesModelsBase
         );
 
         return $this->validate($validation);
+    }
+
+
+    /**
+     *
+     * @param string $callId
+     * @param string $numberRep
+     * @param int $created
+     * @return void
+     */
+    public function setPhonebookRecord(string $callId, string $numberRep, int $created = 0): void
+    {
+        $this->call_id = trim(strip_tags(str_replace('"',"'", $callId)));
+        $this->number_rep = $numberRep;
+        $this->number = $this->cleanPhoneNumber($numberRep, TRUE);
+        $this->created = $created;
+
+        // Combine all fields into a single string
+        $this->search_index = mb_strtolower($callId) . $this->number . $this->number_rep;
+    }
+
+    /**
+     * Clean phone number by removing non-numeric characters
+     *
+     * @param string $numberRep The original phone number (including special characters)
+     * @param boolean $isNormalize Is Normalize number
+     * @return string The cleaned phone number (digits only)
+     */
+    public static function cleanPhoneNumber(string $numberRep, bool $isNormalize = FALSE): string
+    {
+        // Remove all non-numeric characters
+        $numberRep = preg_replace('/\D+/', '', $numberRep);
+        // Normalize number
+        return $isNormalize ? '1' . substr($numberRep, -9) : $numberRep;
     }
 }

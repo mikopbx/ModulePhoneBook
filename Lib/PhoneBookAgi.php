@@ -23,6 +23,7 @@ namespace Modules\ModulePhoneBook\Lib;
 use MikoPBX\Core\Asterisk\AGI;
 use MikoPBX\Core\System\Util;
 use Modules\ModulePhoneBook\Models\PhoneBook;
+use Modules\ModulePhoneBook\Models\Settings;
 use Phalcon\Di\Injectable;
 
 /**
@@ -48,15 +49,27 @@ class PhoneBookAgi extends Injectable
             } else {
                 $number = $agi->request['agi_extension'];
             }
-
+            $number_orig = $number;
             // Normalize the phone number to match the expected format (last 9 digits)
-            $number = '1' . substr($number, -9);
+            $number = PhoneBook::cleanPhoneNumber($number, TRUE);
 
             // Find the corresponding phonebook entry by the number
             $result = PhoneBook::findFirstByNumber($number);
 
+            $settings = Settings::findFirst();
+            $lifeTime = ($settings !== null) ? ($settings->phoneBookLifeTime ?? 0) : 0;
+            $apiUrl = ($settings !== null) ? ($settings->phoneBookApiUrl ?? '') : '';
+
+            if ($result === null || empty($result->call_id) || ($lifeTime > 0 && $result->created > 0 && $result->created + $lifeTime < time())) {
+                // The record was not found or expired - search through the API if configured
+                if (!empty($apiUrl)) {
+                    $searcher = new PhoneBookFind();
+                    $result = $searcher->findApiByNumber($number_orig, $result);
+                }
+            }
+
             // If a matching record is found and the call_id is not empty, set the appropriate caller ID
-            if ($result !== null && !empty($result->call_id)) {
+            if ($result !== NULL && !empty($result->call_id)) {
                 if ($type === 'in') {
                     $agi->set_variable('CALLERID(name)', $result->call_id);
                 } else {

@@ -1,12 +1,13 @@
 <?php
+
 return [
     /**
- * Copyright (C) MIKO LLC - All Rights Reserved
- * Unauthorized copying of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by Nikolay Beketov, 6 2018
- *
- */
+     * Copyright (C) MIKO LLC - All Rights Reserved
+     * Unauthorized copying of this file, via any medium is strictly prohibited
+     * Proprietary and confidential
+     * Written by Nikolay Beketov, 6 2018
+     *
+     */
     'repModulePhoneBook' => 'Module phonebook - %repesent%',
     'mo_ModuleModulePhoneBook' => 'Module phonebook',
     'BreadcrumbModulePhoneBook' => 'Phonebook',
@@ -45,4 +46,11 @@ return [
     'module_phnbk_AllRecordsDeleted' => 'All entries have been deleted',
     'module_phnbk_RecognitionOnProgress' => 'Parsing and loading data from a file',
     'module_phnbk_RecognitionFinished' => 'Data loading completed',
+    'module_phnbk_UrlNotValid' => 'Url not valid',
+    'module_phnbk_IntegerPositiveOrZero' => 'A positive integer or zero',
+    'module_phnbk_CacheLifetime' => 'Cache lifetime',
+    'module_phnbk_CacheLifetimeDescription' => 'The number of seconds during which the cached record will be valid. 0 - forever.',
+    'module_phnbk_SaveBtn' => 'Save',
+    'module_phnbk_ApiUrl' => 'The URL to search for the CallerID',
+    'module_phnbk_ApiUrlDescription' => '%repesent% in the line will be replaced with a phone number.'
 ];
