@@ -31,7 +31,7 @@ use Modules\ModulePhoneBook\Lib\MikoPBXVersion;
  * @method static mixed findFirstByNumber(array|string|int $parameters = null)
  * @Indexes(
  *     [name='number', columns=['number'], type=''],
- *     [name='CallerID', columns=['CallerID'], type=''],
+ *     [name='CallerID', columns=['call_id'], type=''],
  *     [name='Created', columns=['created'], type='']
  * )
  */
