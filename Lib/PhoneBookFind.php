@@ -28,8 +28,6 @@ use Modules\ModulePhoneBook\Models\PhoneBook;
 use Modules\ModulePhoneBook\Models\Settings;
 use Phalcon\Di\Injectable;
 
-include_once __DIR__ . '/../vendor/autoload.php';
-
 /**
  * Class PhoneBookFind
  *
